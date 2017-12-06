@@ -1,0 +1,30 @@
+{
+  "name": "rikudou/skqrpayment",
+  "type": "library",
+  "description": "QR payment library for Slovak accounts",
+  "homepage": "https://github.com/RikudouSage/QrPaymentSK",
+  "keywords": [
+    "qr",
+    "payment"
+  ],
+  "license": "WTFPL",
+  "authors": [
+    {
+      "name": "Dominik Chrástecký",
+      "email": "dominik@chrastecky.cz"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "autoload": {
+    "classmap": [
+      "QrPayment.php",
+      "QrPaymentException.php",
+      "QrPaymentOptions.php"
+    ]
+  },
+  "suggest": {
+    "endroid/qrcode": "1.6.*"
+  }
+}
