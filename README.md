@@ -5,6 +5,8 @@ All methods are documented in source code.
 This library currently only supports Linux OS and needs the `xz` binary to be installed
 on system.
 
+**[See also QR code payment generator for Czech accounts](https://github.com/RikudouSage/QrPaymentCZ)**.
+
 ## Installation
 
 Via composer: `composer require rikudou/skqrpayment`
