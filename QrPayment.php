@@ -195,8 +195,7 @@ class QrPayment
             throw new QrPaymentException("Failed to calculate hash due to unknown error.", QrPaymentException::ERR_FAILED_TO_CALCULATE_HASH);
         }
 
-        var_dump($hashedData);
-        exit;
+        return $hashedData;
     }
 
     /**
