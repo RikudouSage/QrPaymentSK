@@ -229,20 +229,21 @@ class QrPayment
     public function getQrImage($setPngHeader = false)
     {
         if (!class_exists("Endroid\QrCode\QrCode")) {
-            throw new QrPaymentException("Error: library Endroid\QrCode is not loaded.", QrPaymentException::ERR_MISSING_LIBRARY);
+          throw new QrPaymentException("Error: library endroid/qr-code is not loaded.", QrPaymentException::ERR_MISSING_LIBRARY);
         }
 
         if ($setPngHeader) {
             header("Content-type: image/png");
         }
 
-        $qr = new QrCode;
-        return $qr->setText($this->getQrString());
+        return new QrCode($this->getQrString());
     }
 
     /**
      * @param string $iban
+     *
      * @return static
+     * @throws \rikudou\SkQrPayment\QrPaymentException
      */
     public static function fromIBAN($iban)
     {
