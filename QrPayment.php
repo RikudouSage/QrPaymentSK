@@ -39,6 +39,8 @@ class QrPayment
     public $swift;
     /** @var string|null $iban */
     protected $iban = null;
+    /** @var string $xzPath */
+    protected $xzPath = null;
 
     /**
      * QrPayment constructor.
@@ -52,16 +54,6 @@ class QrPayment
      */
     public function __construct($account, $bank, array $options = null)
     {
-
-        if (PHP_OS != "Linux") {
-            throw new QrPaymentException("This library currently supports only Linux", QrPaymentException::ERR_UNSUPPORTED_OS);
-        }
-
-        exec("which xz", $null, $return);
-        if ($return !== 0) {
-            throw new QrPaymentException("This library requires the 'xz' binary in your path", QrPaymentException::ERR_MISSING_XZ);
-        }
-
         $this->account = $account;
         $this->bank = $bank;
 
@@ -148,7 +140,7 @@ class QrPayment
         ]);
 
         $hashedData = strrev(hash("crc32b", $data, true)) . $data;
-        $xzBinary = trim(`which xz`);
+        $xzBinary = $this->getXzBinary();
 
         $xzProcess = proc_open("$xzBinary '--format=raw' '--lzma1=lc=3,lp=0,pb=2,dict=128KiB' '-c' '-'", [
             0 => [
@@ -340,6 +332,37 @@ class QrPayment
     {
         $this->swift = $swift;
         return $this;
+    }
+
+  /**
+   * @param string $binaryPath
+   *
+   * @return $this
+   */
+    public function setXzBinary($binaryPath) {
+      $this->xzPath = $binaryPath;
+      return $this;
+    }
+
+  /**
+   * @return string
+   * @throws \rikudou\SkQrPayment\QrPaymentException
+   */
+    public function getXzBinary() {
+      if(is_null($this->xzPath)) {
+        exec("which xz", $output, $return);
+        if ($return !== 0) {
+          throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()", QrPaymentException::ERR_MISSING_XZ);
+        }
+        if(!isset($output[0])) {
+          throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()", QrPaymentException::ERR_MISSING_XZ);
+        }
+        $this->xzPath = $output[0];
+      }
+      if(!file_exists($this->xzPath)) {
+        throw new QrPaymentException("The path '{$this->xzPath}' to 'xz' binary is invalid", QrPaymentException::ERR_MISSING_XZ);
+      }
+      return $this->xzPath;
     }
 
 }

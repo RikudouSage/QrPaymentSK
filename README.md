@@ -2,8 +2,8 @@
 
 A simple library to generate QR payment code for Slovakia.
 All methods are documented in source code.
-This library currently only supports Linux OS and needs the `xz` binary to be installed
-on system.
+This library needs the `xz` binary to be present. If the binary is not in your PATH,
+you must set the path to `xz` manually.
 
 > [See also QR code payment generator for Czech accounts](https://github.com/RikudouSage/QrPaymentCZ).
 
@@ -82,10 +82,10 @@ The only exception thrown by this library is `rikudou\SkQrPayment\QrPaymentExcep
 
 **Methods that can throw exception:**
 
-- `__construct()` - if you don't run this library on Linux or the `xz` binary is not in your path
 - `getQrString()` - if you're missing SWIFT or if the date is not a valid date or if the hash calculation fails
 - `getQrImage()` - if any property contains asterisk(`*`) or if the date is not a valid date
 or if the `endroid\qrcode` is not loaded
+- `getXzBinary()` - if the `xz` binary is not available
 
 **Error codes**
 
@@ -95,7 +95,6 @@ The `QrPaymentException` contains constants to help you debugging the reason for
 - `QrPaymentException::ERR_DATE` - this code is thrown if the date is not a valid date
 - `QrPaymentException::ERR_MISSING_LIBRARY` - this code is thrown if you try to use `getQrImage()` method but don't have
 the `endroid\qrcode` library installed
-- `QrPaymentException::ERR_UNSUPPORTED_OS` - this code is thrown if you run this library on unsupported OS (currently only Linux supported)
 - `QrPaymentException::ERR_MISSING_REQUIRED_OPTION` - when you're missing any option that is required when you try to generate qr string
 - `QrPaymentException::ERR_FAILED_TO_CALCULATE_HASH` - when the hash calculation fails due tu unknown error
 
@@ -245,6 +244,61 @@ $payment = QrPayment::fromIBAN("SK6807200002891987426353")->setOptions([
 
 $payment->getQrImage(true) // sets the content-type and renders
     ->writeString();
+
+```
+
+### getXzBinary()
+
+Returns the path to the `xz` binary. If the binary is not set via `setXzBinary()`
+it tries to get the `xz` binary path from system.
+
+Throws exception if neither succeeds.
+
+**Returns**
+
+`string`
+
+**Example**
+
+```php
+<?php
+
+use rikudou\SkQrPayment\QrPayment;
+use rikudou\SkQrPayment\QrPaymentException;
+
+$payment = QrPayment::fromIBAN("SK6807200002891987426353");
+
+try {
+  $payment->getXzBinary();
+} catch (QrPaymentException $exception) {
+  // the xz binary was not found in PATH
+}
+
+```
+
+### setXzBinary()
+
+**Params**
+
+- `string $binaryPath` - the path to the `xz` binary
+
+**Returns**
+
+Returns itself, you can use this method for chaining.
+
+**Example**
+
+```php
+<?php
+
+use rikudou\SkQrPayment\QrPayment;
+use rikudou\SkQrPayment\QrPaymentException;
+
+$payment = QrPayment::fromIBAN("SK6807200002891987426353");
+
+echo $payment->getXzBinary(); // prints /usr/bin/xz or something similar
+$payment->setXzBinary("/path/to/xz");
+echo $payment->getXzBinary(); // prints /path/to/xz
 
 ```
 
