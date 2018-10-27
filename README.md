@@ -82,7 +82,9 @@ The only exception thrown by this library is `rikudou\SkQrPayment\QrPaymentExcep
 
 **Methods that can throw exception:**
 
-- `getQrString()` - if you're missing SWIFT or if the date is not a valid date or if the hash calculation fails
+- `getQrString()` - if you're missing SWIFT
+(the library will try to find SWIFT automatically from map)
+or if the date is not a valid date or if the hash calculation fails
 - `getQrImage()` - if any property contains asterisk(`*`) or if the date is not a valid date
 or if the `endroid\qrcode` is not loaded
 - `getXzBinary()` - if the `xz` binary is not available
