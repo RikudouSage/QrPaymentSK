@@ -115,7 +115,10 @@ class QrPayment
     public function getQrString()
     {
         if (!$this->swift) {
-            throw new QrPaymentException("The 'swift' option is required, please use 'setSwift(string)'", QrPaymentException::ERR_MISSING_REQUIRED_OPTION);
+            $swift = new IBANtoBIC($this->getIBAN());
+            if (!$this->swift = $swift->getBIC()) {
+                throw new QrPaymentException("The 'swift' option is required, please use 'setSwift(string)'", QrPaymentException::ERR_MISSING_REQUIRED_OPTION);
+            }
         }
 
         $data = implode("\t", [
@@ -136,7 +139,7 @@ class QrPayment
                 $this->swift,
                 '0', // standing order
                 '0', // direct debit
-                    // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
+                // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
             ])
         ]);
 
@@ -190,7 +193,7 @@ class QrPayment
             $hashedData[$i] = "0123456789ABCDEFGHIJKLMNOPQRSTUV"[bindec(substr($base64Data, $i * 5, 5))];
         }
 
-        if(!$hashedData) {
+        if (!$hashedData) {
             throw new QrPaymentException("Failed to calculate hash due to unknown error.", QrPaymentException::ERR_FAILED_TO_CALCULATE_HASH);
         }
 
@@ -230,7 +233,7 @@ class QrPayment
     public function getQrImage($setPngHeader = false)
     {
         if (!class_exists("Endroid\QrCode\QrCode")) {
-          throw new QrPaymentException("Error: library endroid/qr-code is not loaded.", QrPaymentException::ERR_MISSING_LIBRARY);
+            throw new QrPaymentException("Error: library endroid/qr-code is not loaded.", QrPaymentException::ERR_MISSING_LIBRARY);
         }
 
         if ($setPngHeader) {
@@ -343,35 +346,37 @@ class QrPayment
         return $this;
     }
 
-  /**
-   * @param string $binaryPath
-   *
-   * @return $this
-   */
-    public function setXzBinary($binaryPath) {
-      $this->xzPath = $binaryPath;
-      return $this;
+    /**
+     * @param string $binaryPath
+     *
+     * @return $this
+     */
+    public function setXzBinary($binaryPath)
+    {
+        $this->xzPath = $binaryPath;
+        return $this;
     }
 
-  /**
-   * @return string
-   * @throws \rikudou\SkQrPayment\QrPaymentException
-   */
-    public function getXzBinary() {
-      if(is_null($this->xzPath)) {
-        exec("which xz", $output, $return);
-        if ($return !== 0) {
-          throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()", QrPaymentException::ERR_MISSING_XZ);
+    /**
+     * @return string
+     * @throws \rikudou\SkQrPayment\QrPaymentException
+     */
+    public function getXzBinary()
+    {
+        if (is_null($this->xzPath)) {
+            exec("which xz", $output, $return);
+            if ($return !== 0) {
+                throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()", QrPaymentException::ERR_MISSING_XZ);
+            }
+            if (!isset($output[0])) {
+                throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()", QrPaymentException::ERR_MISSING_XZ);
+            }
+            $this->xzPath = $output[0];
         }
-        if(!isset($output[0])) {
-          throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()", QrPaymentException::ERR_MISSING_XZ);
+        if (!file_exists($this->xzPath)) {
+            throw new QrPaymentException("The path '{$this->xzPath}' to 'xz' binary is invalid", QrPaymentException::ERR_MISSING_XZ);
         }
-        $this->xzPath = $output[0];
-      }
-      if(!file_exists($this->xzPath)) {
-        throw new QrPaymentException("The path '{$this->xzPath}' to 'xz' binary is invalid", QrPaymentException::ERR_MISSING_XZ);
-      }
-      return $this->xzPath;
+        return $this->xzPath;
     }
 
 }

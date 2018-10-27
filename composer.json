@@ -21,7 +21,8 @@
     "classmap": [
       "QrPayment.php",
       "QrPaymentException.php",
-      "QrPaymentOptions.php"
+      "QrPaymentOptions.php",
+      "IBANtoBIC.php"
     ]
   },
   "suggest": {
