@@ -119,29 +119,32 @@ class QrPayment
         }
 
         $data = implode("\t", [
-            0 => '',
-            1 => '1',
+            0 => '', // payment identifier (can be anything)
+            1 => '1', // count of payments
             2 => implode("\t", [
-                true,
+                true, // regular payment
                 round($this->amount, 2),
                 $this->currency,
                 $this->getDueDate()->format("Ymd"),
                 $this->variableSymbol,
                 $this->constantSymbol,
                 $this->specificSymbol,
-                '',
+                '', // variable symbol, constant symbol and specific symbol in SEPA format (empty because the 3 previous are already defined)
                 $this->comment,
-                '1',
+                '1', // one target account
                 $this->getIBAN(),
                 $this->swift,
-                '0',
-                '0'
+                '0', // standing order
+                '0', // direct debit
+                    // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
             ])
         ]);
 
+        // get the crc32 of the string in binary format and prepend it to the data
         $hashedData = strrev(hash("crc32b", $data, true)) . $data;
         $xzBinary = $this->getXzBinary();
 
+        // we need to get raw lzma1 compressed data with parameters LC=3, LP=0, PB=2, DICT_SIZE=128KiB
         $xzProcess = proc_open("$xzBinary '--format=raw' '--lzma1=lc=3,lp=0,pb=2,dict=128KiB' '-c' '-'", [
             0 => [
                 "pipe",
@@ -160,6 +163,8 @@ class QrPayment
         fclose($xzProcessPipes[1]);
         proc_close($xzProcess);
 
+        // we need to strip the EOF data and prepend 4 bytes of data, first 2 bytes define document type, the other 2
+        // define the length of original string, all the magic below does that
         $hashedData = bin2hex("\x00\x00" . pack("v", strlen($hashedData)) . $pipeOutput);
 
         $base64Data = "";
@@ -179,6 +184,8 @@ class QrPayment
         $length = $length / 5;
 
         $hashedData = str_repeat("_", $length);
+
+        // convert the resulting binary data (5 bits at a time) according to table from specification
         for ($i = 0; $i < $length; $i++) {
             $hashedData[$i] = "0123456789ABCDEFGHIJKLMNOPQRSTUV"[bindec(substr($base64Data, $i * 5, 5))];
         }
@@ -187,6 +194,8 @@ class QrPayment
             throw new QrPaymentException("Failed to calculate hash due to unknown error.", QrPaymentException::ERR_FAILED_TO_CALCULATE_HASH);
         }
 
+        // and that's it, this totally-not-crazy-overkill-format-that-allows-you-to-sell-your-proprietary-solution
+        // process is done
         return $hashedData;
     }
 
