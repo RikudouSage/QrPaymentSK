@@ -71,6 +71,7 @@ class IBANtoBIC {
       "8180" => "SPSRSKBA",
       "8300" => "HSBCSKBA",
       "8320" => "JTBPSKBA",
+      "8330" => "FIOZSKBA",
       "8350" => "ABNASKBX",
       "8360" => "BREXSKBX",
       "9951" => "XBRASKB1",
