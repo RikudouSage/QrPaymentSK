@@ -94,14 +94,22 @@ class QrPayment
         $part1 = ord($this->country[0]) - ord('A') + 10;
         $part2 = ord($this->country[1]) - ord('A') + 10;
 
-        $numeric = sprintf("%04d%016d%d%d00", $this->bank, $this->account, $part1, $part2);
+        $accountPrefix = 0;
+        $accountNumber = $this->account;
+        if(strpos($accountNumber, '-') !== false) {
+            $accountParts = explode('-', $accountNumber);
+            $accountPrefix = $accountParts[0];
+            $accountNumber = $accountParts[1];
+        }
+
+        $numeric = sprintf('%04d%06d%010d%d%d00', $this->bank, $accountPrefix, $accountNumber, $part1, $part2);
 
         $mod = "";
         foreach (str_split($numeric) as $n) {
             $mod = ($mod . $n) % 97;
         }
 
-        $this->iban = sprintf("%.2s%02d%04d%016d", $this->country, 98 - $mod, $this->bank, $this->account);
+        $this->iban = sprintf("%.2s%02d%04d%06d%010d", $this->country, 98 - $mod, $this->bank, $accountPrefix, $accountNumber);
         return $this->iban;
     }
 
