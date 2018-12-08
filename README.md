@@ -1,5 +1,7 @@
 # QR code payment (SK)
 
+![Build Status](https://travis-ci.com/RikudouSage/QrPaymentSK.svg?branch=master "master build status")
+
 A simple library to generate QR payment code for Slovakia.
 All methods are documented in source code.
 This library needs the `xz` binary to be present. If the binary is not in your PATH,

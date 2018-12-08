@@ -27,5 +27,13 @@
   },
   "suggest": {
     "endroid/qr-code": "^3.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "\\rikudou\\SkQrPayment\\Tests\\": "tests/"
+    }
   }
 }
