@@ -28,7 +28,7 @@ class QrPayment
     /** @var int $repeat */
     public $repeat = 7;
     /** @var string $internalId */
-    public $internalId;
+    public $internalId = "";
     /** @var string|\DateTime $dueDate */
     public $dueDate;
     /** @var float $amount */
@@ -50,7 +50,6 @@ class QrPayment
      * @param int|string $account
      * @param int|string $bank
      * @param array $options
-     * @throws QrPaymentException
      */
     public function __construct($account, $bank, array $options = null)
     {
@@ -130,7 +129,7 @@ class QrPayment
         }
 
         $data = implode("\t", [
-            0 => '', // payment identifier (can be anything)
+            0 => $this->internalId, // payment identifier (can be anything)
             1 => '1', // count of payments
             2 => implode("\t", [
                 true, // regular payment
@@ -214,7 +213,7 @@ class QrPayment
      * Checks whether the due date is set.
      * Throws exception if the date format cannot be parsed by strtotime() func
      *
-     * @return \DateTime|null
+     * @return \DateTime
      * @throws \rikudou\SkQrPayment\QrPaymentException
      */
     protected function getDueDate()
@@ -362,6 +361,16 @@ class QrPayment
     public function setXzBinary($binaryPath)
     {
         $this->xzPath = $binaryPath;
+        return $this;
+    }
+
+    /**
+     * @param string $internalId
+     * @return QrPayment
+     */
+    public function setInternalId($internalId)
+    {
+        $this->internalId = $internalId;
         return $this;
     }
 
