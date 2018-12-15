@@ -7,7 +7,9 @@ All methods are documented in source code.
 This library needs the `xz` binary to be present. If the binary is not in your PATH,
 you must set the path to `xz` manually.
 
-> [See also QR code payment generator for Czech accounts](https://github.com/RikudouSage/QrPaymentCZ).
+> See also QR code payment generator for
+[Czech](https://github.com/RikudouSage/QrPaymentCZ)
+or [European](https://github.com/RikudouSage/QrPaymentEU) accounts.
 
 > Using Symfony? See the [QR Payment Bundle](https://github.com/RikudouSage/QrPaymentBundle).
 
