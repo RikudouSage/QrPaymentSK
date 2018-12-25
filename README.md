@@ -1,6 +1,7 @@
 # QR code payment (SK)
 
 ![Build Status](https://travis-ci.com/RikudouSage/QrPaymentSK.svg?branch=master "master build status")
+[![Download](https://img.shields.io/packagist/dt/rikudou/skqrpayment.svg)](https://packagist.org/packages/rikudou/skqrpayment)
 
 A simple library to generate QR payment code for Slovakia.
 All methods are documented in source code.
