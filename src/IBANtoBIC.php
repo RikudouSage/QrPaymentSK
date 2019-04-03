@@ -2,6 +2,9 @@
 
 namespace rikudou\SkQrPayment;
 
+/**
+ * @final
+ */
 class IBANtoBIC
 {
     private $map = [

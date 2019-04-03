@@ -7,42 +7,23 @@ use Endroid\QrCode\QrCode;
 
 /**
  * Class QrPayment
+ *
+ * @property int $variableSymbol
+ * @property int $specificSymbol
+ * @property int $constantSymbol
+ * @property string $currency
+ * @property string $comment
+ * @property int $repeat
+ * @property string $internalId
+ * @property string|DateTime $dueDate
+ * @property float $amount
+ * @property string $country
+ * @property string $swift
+ *
+ * @final
  */
 class QrPayment
 {
-    /** @var int $variableSymbol */
-    public $variableSymbol;
-
-    /** @var int $specificSymbol */
-    public $specificSymbol;
-
-    /** @var int $constantSymbol */
-    public $constantSymbol;
-
-    /** @var string $currency */
-    public $currency = 'EUR';
-
-    /** @var string $comment */
-    public $comment = '';
-
-    /** @var int $repeat */
-    public $repeat = 7;
-
-    /** @var string $internalId */
-    public $internalId = '';
-
-    /** @var string|DateTime $dueDate */
-    public $dueDate;
-
-    /** @var float $amount */
-    public $amount;
-
-    /** @var string $country */
-    public $country = 'SK';
-
-    /** @var string $swift */
-    public $swift;
-
     /** @var  string $account */
     protected $account;
 
@@ -54,6 +35,39 @@ class QrPayment
 
     /** @var string|null $xzPath */
     protected $xzPath = null;
+
+    /** @var int $variableSymbol */
+    private $variableSymbol;
+
+    /** @var int $specificSymbol */
+    private $specificSymbol;
+
+    /** @var int $constantSymbol */
+    private $constantSymbol;
+
+    /** @var string $currency */
+    private $currency = 'EUR';
+
+    /** @var string $comment */
+    private $comment = '';
+
+    /** @var int $repeat */
+    private $repeat = 7;
+
+    /** @var string $internalId */
+    private $internalId = '';
+
+    /** @var string|DateTime $dueDate */
+    private $dueDate;
+
+    /** @var float $amount */
+    private $amount;
+
+    /** @var string $country */
+    private $country = 'SK';
+
+    /** @var string $swift */
+    private $swift;
 
     /**
      * QrPayment constructor.
@@ -72,6 +86,55 @@ class QrPayment
         if ($options) {
             $this->setOptions($options);
         }
+
+        if (get_class($this) !== __CLASS__) {
+            trigger_error(
+                sprintf("Extending the class '%s' is deprecated as the class will be marked final in future versions", __CLASS__),
+                E_USER_DEPRECATED
+            );
+        }
+    }
+
+    public function __get($name)
+    {
+        static $deprecationTriggered = false;
+        $protectedProperties = [
+            'account',
+            'bank',
+            'iban',
+            'xzPath',
+        ];
+        if (property_exists($this, $name) && !in_array($name, $protectedProperties)) {
+            if (!$deprecationTriggered) {
+                trigger_error('Direct access to properties is deprecated and will be removed in future versions', E_USER_DEPRECATED);
+                $deprecationTriggered = true;
+            }
+
+            return $this->{$name};
+        }
+
+        throw new \RuntimeException(sprintf("Trying to access non-existent property '%s' of class '%s'", $name, __CLASS__));
+    }
+
+    public function __set($name, $value)
+    {
+        static $deprecationTriggered = false;
+        $protectedProperties = [
+            'account',
+            'bank',
+            'iban',
+            'xzPath',
+        ];
+        if (property_exists($this, $name) && !in_array($name, $protectedProperties)) {
+            if (!$deprecationTriggered) {
+                trigger_error('Direct access to properties is deprecated and will be removed in future versions', E_USER_DEPRECATED);
+                $deprecationTriggered = true;
+            }
+
+            return $this->{$name} = $value;
+        }
+
+        throw new \RuntimeException(sprintf("Trying to access non-existent property '%s' of class '%s'", $name, __CLASS__));
     }
 
     /**
@@ -136,6 +199,7 @@ class QrPayment
      * @throws QrPaymentException
      *
      * @return string
+     *
      *
      */
     public function getQrString()
@@ -236,9 +300,10 @@ class QrPayment
      *
      * @param bool $setPngHeader
      *
-     *@throws QrPaymentException
+     * @throws QrPaymentException
      *
      * @return \Endroid\QrCode\QrCode
+     *
      *
      */
     public function getQrImage($setPngHeader = false)
@@ -260,6 +325,7 @@ class QrPayment
      * @throws QrPaymentException
      *
      * @return static
+     *
      *
      */
     public static function fromIBAN($iban)
@@ -407,6 +473,7 @@ class QrPayment
      *
      * @return string
      *
+     *
      */
     public function getXzBinary()
     {
@@ -434,6 +501,7 @@ class QrPayment
      * @throws QrPaymentException
      *
      * @return DateTime
+     *
      *
      */
     protected function getDueDate()

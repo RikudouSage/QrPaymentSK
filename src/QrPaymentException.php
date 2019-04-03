@@ -2,6 +2,9 @@
 
 namespace rikudou\SkQrPayment;
 
+/**
+ * @final
+ */
 class QrPaymentException extends \Exception
 {
     public const ERR_MISSING_XZ = 1;
