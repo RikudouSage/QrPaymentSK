@@ -43,16 +43,16 @@ class QrPayment
     /** @var string $swift */
     public $swift;
 
-    /** @var  int|string $account */
+    /** @var  string $account */
     protected $account;
 
-    /** @var  int $bank */
+    /** @var  string $bank */
     protected $bank;
 
     /** @var string|null $iban */
     protected $iban = null;
 
-    /** @var string $xzPath */
+    /** @var string|null $xzPath */
     protected $xzPath = null;
 
     /**
@@ -66,8 +66,8 @@ class QrPayment
      */
     public function __construct($account, $bank, array $options = null)
     {
-        $this->account = $account;
-        $this->bank = $bank;
+        $this->account = strval($account);
+        $this->bank = strval($bank);
 
         if ($options) {
             $this->setOptions($options);
@@ -122,6 +122,7 @@ class QrPayment
         foreach (str_split($numeric) as $n) {
             $mod = ($mod . $n) % 97;
         }
+        $mod = intval($mod);
 
         $this->iban = sprintf('%.2s%02d%04d%06d%010d', $this->country, 98 - $mod, $this->bank, $accountPrefix, $accountNumber);
 
@@ -140,10 +141,11 @@ class QrPayment
     public function getQrString()
     {
         if (!$this->swift) {
-            $swift = new IBANtoBIC($this->getIBAN());
-            if (!$this->swift = $swift->getBIC()) {
+            $swift = (new IBANtoBIC($this->getIBAN()))->getBIC();
+            if (is_null($swift)) {
                 throw new QrPaymentException("The 'swift' option is required, please use 'setSwift(string)'", QrPaymentException::ERR_MISSING_REQUIRED_OPTION);
             }
+            $this->swift = $swift;
         }
 
         $data = implode("\t", [
@@ -183,6 +185,7 @@ class QrPayment
                 'w',
             ],
         ], $xzProcessPipes);
+        assert(is_resource($xzProcess));
 
         fwrite($xzProcessPipes[0], $hashedData);
         fclose($xzProcessPipes[0]);
