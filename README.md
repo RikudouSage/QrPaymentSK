@@ -18,10 +18,9 @@ or [European](https://github.com/RikudouSage/QrPaymentEU) accounts.
 
 Via composer: `composer require rikudou/skqrpayment`
 
-Manually: clone the repository and include the `QrPaymentException.php`,
-`QrPaymentOptions.php` and `QrPayment.php` in your project.
-
 ## Usage
+
+> Extending the QrPayment class was deprecated as of 2.4.0
 
 You can create the Qr payment from IBAN or BBAN.
 
@@ -310,6 +309,9 @@ echo $payment->getXzBinary(); // prints /path/to/xz
 ```
 
 ### Options
+
+> Direct access to properties (e.g. `$payment->amount = 100`) was deprecated
+as of 2.4.0
 
 This is a list of options you can set.
 
