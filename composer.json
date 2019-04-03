@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "php": ">=5.5.0"
+    "php": "^7.1"
   },
   "autoload": {
     "psr-4": {
@@ -26,11 +26,18 @@
     "endroid/qr-code": "^3.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^4"
+    "friendsofphp/php-cs-fixer": "^2.14",
+    "phpstan/phpstan": "^0.11.5",
+    "phpunit/phpunit": "^7",
+    "endroid/qr-code": "^3.2"
   },
   "autoload-dev": {
     "psr-4": {
       "\\rikudou\\SkQrPayment\\Tests\\": "tests/"
     }
+  },
+  "scripts": {
+    "fixer": "php-cs-fixer fix src --verbose",
+    "phpstan": "phpstan analyse --level=max src"
   }
 }
