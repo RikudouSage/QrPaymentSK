@@ -1,14 +1,18 @@
 <?php
 
-namespace rikudou\SkQrPayment\Structs;
+namespace rikudou\SkQrPayment\Iban;
 
+use Rikudou\Iban\Helper\ToStringIbanTrait;
 use Rikudou\Iban\Iban\IBAN;
 use Rikudou\Iban\Iban\IbanInterface;
-use rikudou\SkQrPayment\IBANtoBIC;
-use rikudou\SkQrPayment\QrPaymentException;
+use Rikudou\Iban\Validator\ValidatorInterface;
+use rikudou\SkQrPayment\Exception\QrPaymentException;
+use rikudou\SkQrPayment\IbanToBic\IbanToBicConverter;
 
-class IbanBicPair
+final class IbanBicPair implements IbanInterface
 {
+    use ToStringIbanTrait;
+
     /**
      * @var IbanInterface
      */
@@ -38,12 +42,8 @@ class IbanBicPair
             ));
         }
         if ($bic === null) {
-            $bic = (new IBANtoBIC($iban))->getBIC();
-            if ($bic === null) {
-                throw new QrPaymentException(
-                    sprintf('Could not find the BIC code for IBAN %s, please supply it manually', $iban)
-                );
-            }
+            $ibanToBicConverter = new IbanToBicConverter();
+            $bic = $ibanToBicConverter->getBic($iban);
         }
 
         $validator = $iban->getValidator();
@@ -69,5 +69,25 @@ class IbanBicPair
     public function getBic(): string
     {
         return $this->bic;
+    }
+
+    /**
+     * Returns the resulting IBAN.
+     *
+     * @return string
+     */
+    public function asString(): string
+    {
+        return $this->getIban()->asString();
+    }
+
+    /**
+     * Returns the validator that checks whether the IBAN is valid.
+     *
+     * @return ValidatorInterface|null
+     */
+    public function getValidator(): ?ValidatorInterface
+    {
+        return $this->getIban()->getValidator();
     }
 }

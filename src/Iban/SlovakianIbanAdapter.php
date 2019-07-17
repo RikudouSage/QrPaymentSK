@@ -1,13 +1,13 @@
 <?php
 
-namespace rikudou\SkQrPayment\Structs;
+namespace rikudou\SkQrPayment\Iban;
 
 use Rikudou\Iban\Helper\ToStringIbanTrait;
 use Rikudou\Iban\Iban\IbanInterface;
 use Rikudou\Iban\Validator\GenericIbanValidator;
 use Rikudou\Iban\Validator\ValidatorInterface;
 
-class SlovakianIbanAdapter implements IbanInterface
+final class SlovakianIbanAdapter implements IbanInterface
 {
     use ToStringIbanTrait;
 
