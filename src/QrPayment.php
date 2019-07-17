@@ -4,6 +4,9 @@ namespace rikudou\SkQrPayment;
 
 use DateTime;
 use Endroid\QrCode\QrCode;
+use Rikudou\Iban\Iban\IBAN;
+use rikudou\SkQrPayment\Structs\IbanBicPair;
+use RuntimeException;
 
 /**
  * Class QrPayment
@@ -35,6 +38,9 @@ class QrPayment
 
     /** @var string|null $xzPath */
     protected $xzPath = null;
+
+    /** @var IbanBicPair[] $ibans */
+    private $ibans = [];
 
     /** @var int $variableSymbol */
     private $variableSymbol;
@@ -83,6 +89,13 @@ class QrPayment
         $this->account = strval($account);
         $this->bank = strval($bank);
 
+        if ($account && $bank) {
+            trigger_error(
+                'Using the constructor to generate iban from bank account and code is deprecated, use static methods fromIban or fromIbans',
+                E_USER_DEPRECATED
+            );
+        }
+
         if ($options) {
             $this->setOptions($options);
         }
@@ -103,6 +116,7 @@ class QrPayment
             'bank',
             'iban',
             'xzPath',
+            'ibans',
         ];
         if (property_exists($this, $name) && !in_array($name, $protectedProperties)) {
             if (!$deprecationTriggered) {
@@ -113,7 +127,7 @@ class QrPayment
             return $this->{$name};
         }
 
-        throw new \RuntimeException(sprintf("Trying to access non-existent property '%s' of class '%s'", $name, __CLASS__));
+        throw new RuntimeException(sprintf("Trying to access non-existent property '%s' of class '%s'", $name, __CLASS__));
     }
 
     public function __set($name, $value)
@@ -124,6 +138,7 @@ class QrPayment
             'bank',
             'iban',
             'xzPath',
+            'ibans',
         ];
         if (property_exists($this, $name) && !in_array($name, $protectedProperties)) {
             if (!$deprecationTriggered) {
@@ -134,7 +149,7 @@ class QrPayment
             return $this->{$name} = $value;
         }
 
-        throw new \RuntimeException(sprintf("Trying to access non-existent property '%s' of class '%s'", $name, __CLASS__));
+        throw new RuntimeException(sprintf("Trying to access non-existent property '%s' of class '%s'", $name, __CLASS__));
     }
 
     /**
@@ -165,6 +180,9 @@ class QrPayment
     {
         if (!is_null($this->iban)) {
             return $this->iban;
+        }
+        if (!$this->account || !$this->bank) {
+            throw new QrPaymentException('Cannot generate IBAN if there is no bank account and bank code');
         }
         $this->country = strtoupper($this->country);
 
@@ -199,12 +217,16 @@ class QrPayment
      * @throws QrPaymentException
      *
      * @return string
-     *
-     *
      */
     public function getQrString()
     {
-        if (!$this->swift) {
+        try {
+            $this->getIBAN();
+            $legacy = true;
+        } catch (QrPaymentException $e) {
+            $legacy = false;
+        }
+        if ($legacy && !$this->swift) {
             $swift = (new IBANtoBIC($this->getIBAN()))->getBIC();
             if (is_null($swift)) {
                 throw new QrPaymentException("The 'swift' option is required, please use 'setSwift(string)'", QrPaymentException::ERR_MISSING_REQUIRED_OPTION);
@@ -212,10 +234,18 @@ class QrPayment
             $this->swift = $swift;
         }
 
-        $data = implode("\t", [
+        if ($legacy) {
+            $this->addIban(new IbanBicPair(new IBAN($this->getIBAN()), $this->swift));
+        }
+
+        if (!count($this->ibans)) {
+            throw new QrPaymentException('Cannot generate QR payment with no IBANs');
+        }
+
+        $dataArray = [
             0 => $this->internalId, // payment identifier (can be anything)
             1 => '1', // count of payments
-            2 => implode("\t", [
+            2 => [
                 true, // regular payment
                 round($this->amount, 2),
                 $this->currency,
@@ -225,14 +255,22 @@ class QrPayment
                 $this->specificSymbol,
                 '', // variable symbol, constant symbol and specific symbol in SEPA format (empty because the 3 previous are already defined)
                 $this->comment,
-                '1', // one target account
-                $this->getIBAN(),
-                $this->swift,
-                '0', // standing order
-                '0', // direct debit
-                // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
-            ]),
-        ]);
+                count($this->ibans), // count of target accounts
+                // continues below in foreach
+            ],
+        ];
+
+        foreach ($this->ibans as $iban) {
+            $dataArray[2][] = $iban->getIban()->asString();
+            $dataArray[2][] = $iban->getBic();
+        }
+
+        $dataArray[2][] = 0; // standing order
+        $dataArray[2][] = 0; // direct debit
+        // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
+        $dataArray[2] = implode("\t", $dataArray[2]);
+
+        $data = implode("\t", $dataArray);
 
         // get the crc32 of the string in binary format and prepend it to the data
         $hashedData = strrev(hash('crc32b', $data, true)) . $data;
@@ -285,10 +323,6 @@ class QrPayment
             $hashedData[$i] = '0123456789ABCDEFGHIJKLMNOPQRSTUV'[bindec(substr($base64Data, $i * 5, 5))];
         }
 
-        if (!$hashedData) {
-            throw new QrPaymentException('Failed to calculate hash due to unknown error.', QrPaymentException::ERR_FAILED_TO_CALCULATE_HASH);
-        }
-
         // and that's it, this totally-not-crazy-overkill-format-that-allows-you-to-sell-your-proprietary-solution
         // process is done
         return $hashedData;
@@ -302,9 +336,7 @@ class QrPayment
      *
      * @throws QrPaymentException
      *
-     * @return \Endroid\QrCode\QrCode
-     *
-     *
+     * @return QrCode
      */
     public function getQrImage($setPngHeader = false)
     {
@@ -320,18 +352,41 @@ class QrPayment
     }
 
     /**
-     * @param string $iban
-     *
-     * @throws QrPaymentException
+     * @param string|IbanBicPair $iban
      *
      * @return static
-     *
-     *
      */
     public static function fromIBAN($iban)
     {
+        if ($iban instanceof IbanBicPair) {
+            return self::fromIBANs([$iban]);
+        }
+        trigger_error(
+            'Constructing IBAN from string is deprecated',
+            E_USER_DEPRECATED
+        );
         $instance = new static(0, 0);
         $instance->iban = $iban;
+
+        return $instance;
+    }
+
+    /**
+     * @param IbanBicPair[] $ibans
+     *
+     * @throws QrPaymentException
+     *
+     * @return QrPayment
+     */
+    public static function fromIBANs(array $ibans): self
+    {
+        $instance = new static(0, 0);
+        foreach ($ibans as $iban) {
+            if (!$iban instanceof IbanBicPair) {
+                throw new QrPaymentException('All items must be instance of ' . IbanBicPair::class);
+            }
+            $instance->addIban($iban);
+        }
 
         return $instance;
     }
@@ -468,6 +523,49 @@ class QrPayment
         return $this;
     }
 
+    public function addIban(IbanBicPair $iban): self
+    {
+        if (!isset($this->ibans[$iban->getIban()->asString()])) {
+            $this->ibans[$iban->getIban()->asString()] = $iban;
+        }
+
+        return $this;
+    }
+
+    public function removeIban(IbanBicPair $iban): self
+    {
+        if (isset($this->ibans[$iban->getIban()->asString()])) {
+            unset($this->ibans[$iban->getIban()->asString()]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return IbanBicPair[]
+     */
+    public function getIbans(): array
+    {
+        return $this->ibans;
+    }
+
+    /**
+     * @param IbanBicPair[] $ibans
+     *
+     * @return QrPayment
+     */
+    public function setIbans(array $ibans):  self
+    {
+        foreach ($this->ibans as $iban) {
+            $this->removeIban($iban);
+        }
+        foreach ($ibans as $iban) {
+            $this->addIban($iban);
+        }
+
+        return $this;
+    }
+
     /**
      * @throws QrPaymentException
      *
@@ -501,8 +599,6 @@ class QrPayment
      * @throws QrPaymentException
      *
      * @return DateTime
-     *
-     *
      */
     protected function getDueDate()
     {
