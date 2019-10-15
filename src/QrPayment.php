@@ -18,6 +18,7 @@ use RuntimeException;
  * @property string $comment
  * @property int $repeat
  * @property string $internalId
+ * @property string $payeeName
  * @property string|DateTime $dueDate
  * @property float $amount
  * @property string $country
@@ -62,6 +63,9 @@ class QrPayment
 
     /** @var string $internalId */
     private $internalId = '';
+
+    /** @var string $payeeName*/
+    private $payeeName = '';
 
     /** @var string|DateTime $dueDate */
     private $dueDate;
@@ -267,7 +271,9 @@ class QrPayment
 
         $dataArray[2][] = 0; // standing order
         $dataArray[2][] = 0; // direct debit
-        // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
+        $dataArray[2][] = $this->payeeName;
+        $dataArray[2][] = ''; // payee's address line 1
+        $dataArray[2][] = ''; // payee's address line 2
         $dataArray[2] = implode("\t", $dataArray[2]);
 
         $data = implode("\t", $dataArray);
@@ -519,6 +525,18 @@ class QrPayment
     public function setInternalId($internalId)
     {
         $this->internalId = $internalId;
+
+        return $this;
+    }
+
+    /**
+     * @param string $payeeName
+     *
+     * @return QrPayment
+     */
+    public function setPayeeName($payeeName)
+    {
+        $this->payeeName = $payeeName;
 
         return $this;
     }
