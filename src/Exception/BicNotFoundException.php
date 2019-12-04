@@ -2,6 +2,9 @@
 
 namespace rikudou\SkQrPayment\Exception;
 
-final class BicNotFoundException extends QrPaymentException
+/**
+ * @final
+ */
+class BicNotFoundException extends QrPaymentException
 {
 }

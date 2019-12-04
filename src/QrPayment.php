@@ -409,11 +409,13 @@ final class QrPayment
 
     /**
      * @param string $payeeName
+     *
      * @return QrPayment
      */
     public function setPayeeName(string $payeeName): QrPayment
     {
         $this->payeeName = $payeeName;
+
         return $this;
     }
 
