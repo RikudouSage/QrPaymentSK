@@ -12,38 +12,65 @@ use rikudou\SkQrPayment\Iban\IbanBicPair;
 
 final class QrPayment
 {
-    /** @var IbanInterface[] $ibans */
+    /**
+     * @var IbanInterface[]
+     */
     private $ibans = [];
 
-    /** @var int $variableSymbol */
+    /**
+     * @var int
+     */
     private $variableSymbol;
 
-    /** @var int $specificSymbol */
+    /**
+     * @var int
+     */
     private $specificSymbol;
 
-    /** @var int $constantSymbol */
+    /**
+     * @var int
+     */
     private $constantSymbol;
 
-    /** @var string $currency */
+    /**
+     * @var string
+     */
     private $currency = 'EUR';
 
-    /** @var string $comment */
+    /**
+     * @var string
+     */
     private $comment = '';
 
-    /** @var string $internalId */
+    /**
+     * @var string
+     */
     private $internalId = '';
 
-    /** @var DateTimeInterface|null $dueDate */
+    /**
+     * @var DateTimeInterface|null
+     */
     private $dueDate = null;
 
-    /** @var float $amount */
+    /**
+     * @var float
+     */
     private $amount;
 
-    /** @var string $country */
+    /**
+     * @var string
+     */
     private $country = 'SK';
 
-    /** @var string|null $xzPath */
+    /**
+     * @var string|null
+     */
     private $xzPath = null;
+
+    /**
+     * @var string
+     */
+    private $payeeName = '';
 
     /**
      * QrPayment constructor.
@@ -108,14 +135,17 @@ final class QrPayment
             ],
         ];
 
-        foreach ($ibans as $iban) {
+        foreach ($ibans as $iban) { // each of the ibans is appended, then the bic
             $dataArray[2][] = $iban->getIban()->asString();
             $dataArray[2][] = $iban->getBic();
         }
 
         $dataArray[2][] = 0; // standing order
         $dataArray[2][] = 0; // direct debit
-        // can also contain other elements in this order: the payee's name, the payee's address (line 1), the payee's address (line 2)
+        $dataArray[2][] = $this->payeeName;
+        $dataArray[2][] = ''; // payee's address line 1
+        $dataArray[2][] = ''; // payee's address line 2
+
         $dataArray[2] = implode("\t", $dataArray[2]);
 
         $data = implode("\t", $dataArray);
@@ -374,6 +404,16 @@ final class QrPayment
     {
         $this->country = $country;
 
+        return $this;
+    }
+
+    /**
+     * @param string $payeeName
+     * @return QrPayment
+     */
+    public function setPayeeName(string $payeeName): QrPayment
+    {
+        $this->payeeName = $payeeName;
         return $this;
     }
 

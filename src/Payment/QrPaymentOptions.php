@@ -15,4 +15,5 @@ final class QrPaymentOptions
     public const DUE_DATE = 'dueDate';
     public const AMOUNT = 'amount';
     public const COUNTRY = 'country';
+    public const PAYEE_NAME = 'payeeName';
 }
