@@ -5,6 +5,7 @@ namespace rikudou\SkQrPayment;
 use DateTime;
 use DateTimeInterface;
 use Endroid\QrCode\QrCode;
+use InvalidArgumentException;
 use Rikudou\Iban\Iban\IbanInterface;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
@@ -98,6 +99,8 @@ final class QrPayment
                 /** @var callable $callable */
                 $callable = [$this, $method];
                 call_user_func($callable, $value);
+            } else {
+                throw new InvalidArgumentException("The property '{$key}' is not valid");
             }
         }
 
