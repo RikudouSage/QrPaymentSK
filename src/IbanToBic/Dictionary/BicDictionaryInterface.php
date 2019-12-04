@@ -5,7 +5,7 @@ namespace rikudou\SkQrPayment\IbanToBic\Dictionary;
 use Rikudou\Iban\Iban\IbanInterface;
 use rikudou\SkQrPayment\Exception\BicNotFoundException;
 
-interface IbanToBicDictionaryInterface
+interface BicDictionaryInterface
 {
     /**
      * Returns the two-letter country code this dictionary is relevant to

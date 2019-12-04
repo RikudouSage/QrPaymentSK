@@ -3,48 +3,44 @@
 namespace rikudou\SkQrPayment\IbanToBic\Dictionary;
 
 use Rikudou\Iban\Iban\IbanInterface;
-use rikudou\SkQrPayment\Exception\CacheException;
+use rikudou\SkQrPayment\Exception\BicNotFoundException;
+use rikudou\SkQrPayment\Helper\CacheableBicDictionaryTrait;
 
-abstract class AbstractBicDictionary implements IbanToBicDictionaryInterface
+abstract class AbstractBicDictionary implements BicDictionaryInterface
 {
-    protected $cache = [];
+    use CacheableBicDictionaryTrait;
 
     /**
-     * Checks whether the BIC for given IBAN is already cached in memory
-     *
-     * @param IbanInterface $iban
-     *
-     * @return bool
+     * @inheritDoc
      */
-    protected function isCached(IbanInterface $iban): bool
+    public function getBic(IbanInterface $iban): string
     {
-        return isset($this->cache[$iban->asString()]);
-    }
-
-    /**
-     * Caches the BIC relevant to given IBAN in memory
-     *
-     * @param IbanInterface $iban
-     * @param string        $bic
-     */
-    protected function cacheResult(IbanInterface $iban, string $bic)
-    {
-        $this->cache[$iban->asString()] = $bic;
-    }
-
-    /**
-     * If the BIC for given IBAN is already cached returns it, otherwise null
-     *
-     * @param IbanInterface $iban
-     *
-     * @return string
-     */
-    protected function getCached(IbanInterface $iban): string
-    {
-        if (!$this->isCached($iban)) {
-            throw new CacheException("There is no cache for IBAN {$iban}");
+        if ($this->isCached($iban)) {
+            return $this->getCached($iban);
         }
 
-        return $this->cache[$iban->asString()];
+        if (isset($this->getMap()[$this->getBankCode($iban)])) {
+            $bic = $this->getMap()[$this->getBankCode($iban)];
+            $this->cacheResult($iban, $bic);
+
+            return $bic;
+        }
+
+        throw new BicNotFoundException(sprintf(
+            'Could not find BIC for IBAN "%s"',
+            $iban->asString()
+        ));
+    }
+
+    /**
+     * Returns the bank code map in format 'bankCode' => 'BIC'
+     *
+     * @return array<string, string>
+     */
+    abstract protected function getMap(): array;
+
+    private function getBankCode(IbanInterface $iban): string
+    {
+        return substr($iban, 4, 4);
     }
 }

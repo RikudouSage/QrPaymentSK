@@ -4,7 +4,7 @@ namespace rikudou\SkQrPayment\Exception;
 
 use Throwable;
 
-class InvalidTypeException extends QrPaymentException
+final class InvalidTypeException extends QrPaymentException
 {
     /**
      * InvalidTypeException constructor.

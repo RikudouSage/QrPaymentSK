@@ -7,7 +7,7 @@ use Rikudou\Iban\Iban\IBAN;
 use Rikudou\Iban\Iban\IbanInterface;
 use Rikudou\Iban\Validator\ValidatorInterface;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
-use rikudou\SkQrPayment\IbanToBic\IbanToBicConverter;
+use rikudou\SkQrPayment\IbanToBic\BicLocator;
 
 final class IbanBicPair implements IbanInterface
 {
@@ -42,7 +42,7 @@ final class IbanBicPair implements IbanInterface
             ));
         }
         if ($bic === null) {
-            $ibanToBicConverter = new IbanToBicConverter();
+            $ibanToBicConverter = new BicLocator();
             $bic = $ibanToBicConverter->getBic($iban);
         }
 

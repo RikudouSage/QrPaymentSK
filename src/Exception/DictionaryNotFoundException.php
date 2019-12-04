@@ -2,6 +2,6 @@
 
 namespace rikudou\SkQrPayment\Exception;
 
-class DictionaryNotFoundException extends BicNotFoundException
+final class DictionaryNotFoundException extends BicNotFoundException
 {
 }

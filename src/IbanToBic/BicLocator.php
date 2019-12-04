@@ -4,14 +4,14 @@ namespace rikudou\SkQrPayment\IbanToBic;
 
 use Rikudou\Iban\Iban\IbanInterface;
 use rikudou\SkQrPayment\Exception\DictionaryNotFoundException;
+use rikudou\SkQrPayment\IbanToBic\Dictionary\BicDictionaryInterface;
 use rikudou\SkQrPayment\IbanToBic\Dictionary\CzechBicDictionary;
-use rikudou\SkQrPayment\IbanToBic\Dictionary\IbanToBicDictionaryInterface;
 use rikudou\SkQrPayment\IbanToBic\Dictionary\SlovakianBicDictionary;
 
-final class IbanToBicConverter
+final class BicLocator
 {
     /**
-     * @var IbanToBicDictionaryInterface[]
+     * @var BicDictionaryInterface[]
      */
     private $dictionaries = [];
 

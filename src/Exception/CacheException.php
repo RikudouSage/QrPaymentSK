@@ -2,6 +2,6 @@
 
 namespace rikudou\SkQrPayment\Exception;
 
-class CacheException extends QrPaymentException
+final class CacheException extends QrPaymentException
 {
 }
