@@ -42,8 +42,7 @@ final class IbanBicPair implements IbanInterface
             ));
         }
         if ($bic === null) {
-            $ibanToBicConverter = new BicLocator();
-            $bic = $ibanToBicConverter->getBic($iban);
+            $bic = (new BicLocator())->getBic($iban);
         }
 
         $validator = $iban->getValidator();
