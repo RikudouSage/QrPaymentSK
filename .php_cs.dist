@@ -21,6 +21,9 @@ return PhpCsFixer\Config::create()
         'explicit_string_variable' => true,
         'final_internal_class' => [
             'consider-absent-docblock-as-internal-class' => true,
+            'annotation-black-list' => [
+                '@non-final',
+            ]
         ],
         'fully_qualified_strict_types' => true,
         'function_typehint_space' => true,

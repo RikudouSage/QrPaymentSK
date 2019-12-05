@@ -5,7 +5,7 @@ namespace rikudou\SkQrPayment\Exception;
 use RuntimeException;
 
 /**
- * @final
+ * @non-final
  */
 class QrPaymentException extends RuntimeException
 {
