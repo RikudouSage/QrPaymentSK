@@ -242,21 +242,7 @@ final class QrPayment
             ], $iban);
         }
 
-        return self::fromIBANs([$iban]);
-    }
-
-    /**
-     * @param IbanInterface[] $ibans
-     *
-     * @throws QrPaymentException
-     *
-     * @return QrPayment
-     */
-    public static function fromIBANs(array $ibans): self
-    {
-        $instance = new static(...$ibans);
-
-        return $instance;
+        return new static($iban);
     }
 
     public function addIban(IbanInterface $iban): self
@@ -307,7 +293,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setVariableSymbol($variableSymbol): self
+    public function setVariableSymbol(int $variableSymbol): self
     {
         $this->variableSymbol = $variableSymbol;
 
@@ -319,7 +305,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setSpecificSymbol($specificSymbol): self
+    public function setSpecificSymbol(int $specificSymbol): self
     {
         $this->specificSymbol = $specificSymbol;
 
@@ -331,7 +317,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setConstantSymbol($constantSymbol): self
+    public function setConstantSymbol(int $constantSymbol): self
     {
         $this->constantSymbol = $constantSymbol;
 
@@ -343,7 +329,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setCurrency($currency): self
+    public function setCurrency(string $currency): self
     {
         $this->currency = $currency;
 
@@ -355,7 +341,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setComment($comment): self
+    public function setComment(string $comment): self
     {
         $this->comment = $comment;
 
@@ -367,7 +353,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setInternalId($internalId): self
+    public function setInternalId(string $internalId): self
     {
         $this->internalId = $internalId;
 
@@ -391,7 +377,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setAmount($amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 
@@ -403,7 +389,7 @@ final class QrPayment
      *
      * @return QrPayment
      */
-    public function setCountry($country): self
+    public function setCountry(string $country): self
     {
         $this->country = $country;
 
@@ -427,7 +413,7 @@ final class QrPayment
      *
      * @return $this
      */
-    public function setXzBinary($binaryPath): self
+    public function setXzBinary(string $binaryPath): self
     {
         $this->xzPath = $binaryPath;
 
@@ -536,7 +522,7 @@ final class QrPayment
      *
      * @return DateTimeInterface
      */
-    private function getDueDate(): DateTimeInterface
+    public function getDueDate(): DateTimeInterface
     {
         if ($this->dueDate === null) {
             return new DateTime();

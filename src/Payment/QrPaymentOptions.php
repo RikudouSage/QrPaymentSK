@@ -4,7 +4,7 @@ namespace rikudou\SkQrPayment\Payment;
 
 final class QrPaymentOptions
 {
-    public const XZ_PATH = 'xzPath';
+    public const XZ_PATH = 'xzBinary';
     public const IBANS = 'ibans';
     public const VARIABLE_SYMBOL = 'variableSymbol';
     public const SPECIFIC_SYMBOL = 'specificSymbol';
