@@ -19,19 +19,19 @@ final class QrPayment
     private $ibans = [];
 
     /**
-     * @var int
+     * @var int|null
      */
-    private $variableSymbol;
+    private $variableSymbol = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    private $specificSymbol;
+    private $specificSymbol = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    private $constantSymbol;
+    private $constantSymbol = null;
 
     /**
      * @var string
@@ -54,9 +54,9 @@ final class QrPayment
     private $dueDate = null;
 
     /**
-     * @var float
+     * @var float|null
      */
-    private $amount;
+    private $amount = null;
 
     /**
      * @var string
@@ -456,6 +456,78 @@ final class QrPayment
         }
 
         return $this->xzPath;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVariableSymbol(): ?int
+    {
+        return $this->variableSymbol;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSpecificSymbol(): ?int
+    {
+        return $this->specificSymbol;
+    }
+
+    /**
+     * @return int
+     */
+    public function getConstantSymbol(): ?int
+    {
+        return $this->constantSymbol;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment(): string
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInternalId(): string
+    {
+        return $this->internalId;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getAmount(): ?float
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry(): string
+    {
+        return $this->country;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPayeeName(): string
+    {
+        return $this->payeeName;
     }
 
     /**
