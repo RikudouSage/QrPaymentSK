@@ -7,11 +7,12 @@ use DateTimeInterface;
 use Endroid\QrCode\QrCode;
 use InvalidArgumentException;
 use Rikudou\Iban\Iban\IbanInterface;
+use Rikudou\QrPayment\QrPaymentInterface;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
 
-final class QrPayment
+final class QrPayment implements QrPaymentInterface
 {
     /**
      * @var IbanInterface[]
@@ -54,9 +55,9 @@ final class QrPayment
     private $dueDate = null;
 
     /**
-     * @var float|null
+     * @var float
      */
-    private $amount = null;
+    private $amount = 0;
 
     /**
      * @var string
@@ -493,9 +494,9 @@ final class QrPayment
     }
 
     /**
-     * @return float|null
+     * @return float
      */
-    public function getAmount(): ?float
+    public function getAmount(): float
     {
         return $this->amount;
     }
