@@ -5,8 +5,9 @@
 
 A simple library to generate QR payment code for Slovakia.
 All methods are documented in source code.
+
 This library needs the `xz` binary to be present. If the binary is not in your PATH,
-you must set the path to `xz` manually.
+you must set the path to `xz` manually. [Download the xz-utils](https://tukaani.org/xz/).
 
 > See also QR code payment generator for
 [Czech](https://github.com/RikudouSage/QrPaymentCZ)
