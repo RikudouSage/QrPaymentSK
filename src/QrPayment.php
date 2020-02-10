@@ -366,7 +366,7 @@ class QrPayment
 
     /**
      * @param string|IbanBicPair $iban
-     * @param int|null           $flags
+     * @param int                $flags
      *
      * @return static
      */
