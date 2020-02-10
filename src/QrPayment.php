@@ -80,6 +80,11 @@ class QrPayment
     private $swift;
 
     /**
+     * @var int
+     */
+    private $flags;
+
+    /**
      * QrPayment constructor.
      * Sets account and bank. Allows to specify options in array in format:
      * property_name => value
@@ -87,8 +92,9 @@ class QrPayment
      * @param int|string $account
      * @param int|string $bank
      * @param array      $options
+     * @param int        $flags   Flags from QrPaymentFlag class
      */
-    public function __construct($account, $bank, array $options = null)
+    public function __construct($account, $bank, array $options = null, int $flags = 0)
     {
         $this->account = strval($account);
         $this->bank = strval($bank);
@@ -110,6 +116,7 @@ class QrPayment
                 E_USER_DEPRECATED
             );
         }
+        $this->flags = $flags;
     }
 
     public function __get($name)
@@ -359,10 +366,11 @@ class QrPayment
 
     /**
      * @param string|IbanBicPair $iban
+     * @param int                $flags
      *
      * @return static
      */
-    public static function fromIBAN($iban)
+    public static function fromIBAN($iban, int $flags = 0)
     {
         if ($iban instanceof IbanBicPair) {
             return self::fromIBANs([$iban]);
@@ -371,7 +379,7 @@ class QrPayment
             'Constructing IBAN from string is deprecated',
             E_USER_DEPRECATED
         );
-        $instance = new static(0, 0);
+        $instance = new static(0, 0, [], $flags);
         $instance->iban = $iban;
 
         return $instance;
@@ -379,14 +387,13 @@ class QrPayment
 
     /**
      * @param IbanBicPair[] $ibans
-     *
-     * @throws QrPaymentException
+     * @param int           $flags
      *
      * @return QrPayment
      */
-    public static function fromIBANs(array $ibans): self
+    public static function fromIBANs(array $ibans, int $flags = 0): self
     {
-        $instance = new static(0, 0);
+        $instance = new static(0, 0, [], $flags);
         foreach ($ibans as $iban) {
             if (!$iban instanceof IbanBicPair) {
                 throw new QrPaymentException('All items must be instance of ' . IbanBicPair::class);
@@ -603,7 +610,7 @@ class QrPayment
             }
             $this->xzPath = $output[0];
         }
-        if (!file_exists($this->xzPath)) {
+        if (!($this->flags & QrPaymentFlag::NO_BINARY_CHECK) && !file_exists($this->xzPath)) {
             throw new QrPaymentException("The path '{$this->xzPath}' to 'xz' binary is invalid", QrPaymentException::ERR_MISSING_XZ);
         }
 
