@@ -70,7 +70,7 @@ class IbanConversionTest extends TestCase
         if (!is_null($prefix)) {
             $account = "{$prefix}-{$account}";
         }
-        $payment = new QrPayment($account, $bankCode);
+        $payment = @new QrPayment($account, $bankCode);
         return $payment->setCountry("CZ")->getIBAN();
     }
 
