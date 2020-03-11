@@ -24,7 +24,8 @@
     }
   },
   "suggest": {
-    "endroid/qr-code": "^3.2"
+    "endroid/qr-code": "^3.2",
+    "rikudou/pay-by-square-decoder": "If you want to decode Pay By Square encoded data"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.14",
