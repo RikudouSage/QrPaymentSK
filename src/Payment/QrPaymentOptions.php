@@ -12,7 +12,6 @@ final class QrPaymentOptions
     public const CURRENCY = 'currency';
     public const COMMENT = 'comment';
     public const INTERNAL_ID = 'internalId';
-    public const PAYEE_NAME = 'payeeName';
     public const DUE_DATE = 'dueDate';
     public const AMOUNT = 'amount';
     public const COUNTRY = 'country';
