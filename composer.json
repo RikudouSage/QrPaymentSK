@@ -15,8 +15,9 @@
     }
   ],
   "require": {
-    "php": "^7.1",
-    "rikudou/iban": "^1.0"
+    "php": "^7.2",
+    "rikudou/iban": "^1.0",
+    "rikudou/qr-payment-interface": "^1.0"
   },
   "autoload": {
     "psr-4": {
@@ -24,18 +25,23 @@
     }
   },
   "suggest": {
-    "endroid/qr-code": "^3.2",
+    "endroid/qr-code": "^3.0",
     "rikudou/pay-by-square-decoder": "If you want to decode Pay By Square encoded data"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^2.14",
-    "phpstan/phpstan": "^0.11.5",
-    "phpunit/phpunit": "^7",
-    "endroid/qr-code": "^3.2"
+    "phpunit/phpunit": "^8.5",
+    "endroid/qr-code": "^3.9",
+    "friendsofphp/php-cs-fixer": "^2.16",
+    "phpstan/phpstan": "^0.12.32"
   },
   "autoload-dev": {
     "psr-4": {
       "\\rikudou\\SkQrPayment\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "platform": {
+      "php": "7.2.32"
     }
   },
   "scripts": {

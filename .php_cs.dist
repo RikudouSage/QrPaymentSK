@@ -19,6 +19,12 @@ return PhpCsFixer\Config::create()
         ],
         'explicit_indirect_variable' => true,
         'explicit_string_variable' => true,
+        'final_internal_class' => [
+            'consider-absent-docblock-as-internal-class' => true,
+            'annotation-black-list' => [
+                '@non-final',
+            ]
+        ],
         'fully_qualified_strict_types' => true,
         'function_typehint_space' => true,
         'include' => true,
@@ -82,4 +88,5 @@ return PhpCsFixer\Config::create()
         'phpdoc_order' => true,
         'phpdoc_scalar' => true,
         'phpdoc_separation' => true,
-    ]);
+    ])
+    ->setRiskyAllowed(true);

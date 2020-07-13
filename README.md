@@ -1,412 +1,231 @@
-# Pay by Square QR code payment (SK)
+# QR code payment (SK) - Pay by Square standard
 
 ![Build Status](https://travis-ci.com/RikudouSage/QrPaymentSK.svg?branch=master "master build status")
 [![Download](https://img.shields.io/packagist/dt/rikudou/skqrpayment.svg)](https://packagist.org/packages/rikudou/skqrpayment)
 
-A simple library to generate QR payment code for Slovakia.
-All methods are documented in source code.
+This library generates a string that can be embedded into QR code and is recognized by all Slovak banks.
 
-This library needs the `xz` binary to be present. If the binary is not in your PATH,
-you must set the path to `xz` manually. [Download the xz-utils](https://tukaani.org/xz/).
+The library requires the `xz` binary to present on the underlying system.
 
-> See also QR code payment generator for
-[Czech](https://github.com/RikudouSage/QrPaymentCZ)
-or [European](https://github.com/RikudouSage/QrPaymentEU) accounts.
-
-> Using Symfony? See the [QR Payment Bundle](https://github.com/RikudouSage/QrPaymentBundle).
+> See also QR code payment generator for [Czech](https://github.com/RikudouSage/QrPaymentCZ) or
+> [European](https://github.com/RikudouSage/QrPaymentEU) accounts.
 
 ## Installation
 
-Via composer: `composer require rikudou/skqrpayment`
+`composer require rikudou/skqrpayment`
 
 ## Usage
 
-> Extending the QrPayment class was deprecated as of 2.4.0
-
-You can create the Qr payment from IBAN or BBAN.
-
-
-From IBAN:
+Create an instance with or without IBANs. All IBANs must be instance of `\Rikudou\Iban\Iban\IbanInterface`.
 
 ```php
 <?php
 
 use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
+use Rikudou\Iban\Iban\IBAN;
+use rikudou\SkQrPayment\Iban\IbanBicPair;
 
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353'));
-// or multiple accounts
-$payment = QrPayment::fromIBANs([
-    new IbanBicPair('SK6807200002891987426353'),
-    new IbanBicPair('SK3302000000000000012351')
-]);
-// you can also specify the BIC (SWIFT) code in the IbanBicPair
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353', 'NBSBSKBX'));
-// if you don't specify the BIC it will be guessed automatically
-```
-From account number and bank code (BBAN):
+// without IBANs
+$payment = new QrPayment();
 
-```php
-<?php
+// one IBAN
+$payment = new QrPayment(new IBAN('SK1234567890123456'));
 
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
-use rikudou\SkQrPayment\Structs\SlovakianIbanAdapter;
-
-$payment = QrPayment::fromIBAN(
-    new IbanBicPair(
-        new SlovakianIbanAdapter('0123123123', '0900')
-    )
+// multiple IBANs, there can be as many as you want
+$payment = new QrPayment(
+    new IBAN('SK1234567890123456'),
+    new IBAN('SK1234567890123456'),
+    new IbanBicPair('SK1234567890123456', 'BANKBIC')
 );
-
 ```
 
-### Setting payment details
+There are three implementations of `IbanInterface` present:
 
-There are two approaches to setting payment details. You can set them in associative array or using the methods
-provided in the class.
+- `\Rikudou\Iban\Iban\IBAN` - generic IBAN class which accepts the IBAN as a string
+- `\rikudou\SkQrPayment\Iban\IbanBicPair` - allows you to supply your own BIC (Swift) code if the bank is not present in
+the [maps](src/IbanToBic/Dictionary)
+- `\Rikudou\Iban\Iban\CzechIbanAdapter` - IBAN that can be constructed from the local Czech format (account number and
+bank code)
 
-**Using associative array**
+You can also construct new instance from string:
 
 ```php
 <?php
 
 use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentOptions;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
 
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353'))->setOptions([
-  QrPaymentOptions::VARIABLE_SYMBOL => 123456,
-  QrPaymentOptions::AMOUNT => 100,
-  QrPaymentOptions::CURRENCY => "EUR",
-  QrPaymentOptions::DUE_DATE => date("Y-m-d", strtotime("+14 days"))    
+$payment = QrPayment::fromIBAN('SK1234567890123456');
+```
+
+### Changing IBANs after construction
+
+If you want to add/remove IBANs after construction, use `addIban()`, `removeIban()` and `setIbans()` methods.
+
+```php
+<?php
+
+use rikudou\SkQrPayment\QrPayment;
+use Rikudou\Iban\Iban\IBAN;
+use rikudou\SkQrPayment\Iban\IbanBicPair;
+
+$payment = new QrPayment();
+
+$iban1 = new IBAN('SK1234567890123456');
+$iban2 = new IBAN('SK6543210987654321');
+
+$payment
+    ->addIban($iban1)
+    ->addIban($iban2);
+// object now contains both IBANs
+
+$payment
+    ->removeIban($iban2);
+// only the first IBAN is now present in the object
+
+// You don't have to store the object, the ibans are considered the same if the string representation is the same:
+$payment
+    ->removeIban(new IbanBicPair('SK1234567890123456'));
+
+// the object now doesn't contain any IBAN
+
+$payment->setIbans([
+    $iban1,
+    $iban2
 ]);
-
 ```
 
-**Using methods**
+### Setting options
+
+You can set all options using the method `setOptions()` or using the respective setters.
+
+> You can use `\rikudou\SkQrPayment\Payment\QrPaymentOptions` constants for option names
+
+Setting options via `setOptions()`:
 
 ```php
 <?php
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
 
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353'))
-    ->setVariableSymbol(123456)
+use rikudou\SkQrPayment\QrPayment;
+use rikudou\SkQrPayment\Payment\QrPaymentOptions;
+use Rikudou\Iban\Iban\IBAN;
+
+$payment = new QrPayment();
+
+$payment->setOptions([
+    QrPaymentOptions::AMOUNT => 100,
+    QrPaymentOptions::COMMENT => 'payment',
+    QrPaymentOptions::CONSTANT_SYMBOL => 123,
+    QrPaymentOptions::COUNTRY => 'SK',
+    QrPaymentOptions::CURRENCY => 'EUR',
+    QrPaymentOptions::DUE_DATE => new DateTime('+1 week'),
+    QrPaymentOptions::INTERNAL_ID => '456',
+    QrPaymentOptions::PAYEE_NAME => 'John Doe',
+    QrPaymentOptions::SPECIFIC_SYMBOL => 789,
+    QrPaymentOptions::VARIABLE_SYMBOL => 012,
+    QrPaymentOptions::XZ_PATH => '/path/to/xz',
+    QrPaymentOptions::IBANS => [
+        new IBAN('SK1234567890123456')
+    ]
+]);
+```
+
+Setting using the fluent setters:
+
+```php
+<?php
+
+use rikudou\SkQrPayment\QrPayment;
+use Rikudou\Iban\Iban\IBAN;
+
+$payment = new QrPayment();
+$payment
     ->setAmount(100)
-    ->setCurrency("EUR")
-    ->setDueDate(date("Y-m-d", strtotime("+14 days")));
+    ->setComment('payment')
+    ->setConstantSymbol(123)
+    ->setCountry('SK')
+    ->setCurrency('EUR')
+    ->setDueDate(new DateTime('+1 week'))
+    ->setInternalId('456')
+    ->setPayeeName('John Doe')
+    ->setSpecificSymbol(789)
+    ->setVariableSymbol(012)
+    ->setXzBinary('/path/to/xz')
+    ->setIbans([
+        new IBAN('SK01234567890123456')
+    ]);
 ```
 
-## Exceptions
+### Defaults
 
-The only exception thrown by this library is `rikudou\SkQrPayment\QrPaymentException`.
+Default values for some of the options are provided:
 
-**Methods that can throw exception:**
+- `currency` - EUR
+- `country` - SK
+- `dueDate` - current date and time
 
-- `IbanBicPair::__construct()` - if the IBAN is of invalid type (not `string` or `IbanInterface`), if the BIC is not
-supplied and could not be automatically guessed and if the IBAN is not valid
-- `QrPayment::getQrString()` - if there are no IBANs set
-- `QrPayment::getQrImage()` - if the `endroid\qrcode` is not loaded
-- `QrPayment::fromIBANs()` - if any of the the IBANs is not instance of `IbanBicPair`
-- `QrPayment::getXzBinary()` - if the `xz` binary is not available
-- `QrPayment::getDueDate()` - if the supplied date could not be parsed into `DateTime` object
+Additionally, these properties are not required:
 
-## List of public methods
+- `variableSymbol`
+- `specificSymbol`
+- `constantSymbol`
+- `comment`
+- `internalId`
+- `payeeName`
 
-### Constructor
+### The xz binary
 
-> Deprecated as of 2.5.0
+Since the Pay by Square standard uses lzma1 which has no php binding, the xz binary needs to be called.
 
-**Params**
+If you have it in the standard PATH, this library should find it on its own, if not you have to set the path manually
+using `setXzBinary()`.
 
-- `int|string $account` - the account number
-- `int|string $bank` - the bank code
-- `array $options` - the array with options (not required).
-The helper class `QrPaymentOptions` can be used for options names.
+### Getting the result
 
-**Example**
+Once you configured all your options, simply call `getQrString()` and process it using your favorite qr code library.
 
-```php
-<?php
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentOptions;
-
-$payment = new QrPayment(1325090010, 3030);
-
-// or with options
-
-$payment = new QrPayment(1325090010, 3030, [
-  QrPaymentOptions::AMOUNT => 100
-]);
-```
-
-### setOptions()
-
-Sets the options, useful if you create object from IBAN.
-
-**Params**
-
-- `array $options` - the same as the constructor param `$options`
-
-**Returns**
-
-Returns itself, you can use this method for chaining.
-
-**Example**
-
-```php
-<?php
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentOptions;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
-
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353'))->setOptions([
-  QrPaymentOptions::AMOUNT => 100
-]);
-```
-
-### getIBAN()
-
-> Deprecated as of 2.5.0
-
-Returns the IBAN, either from supplied IBAN or generated from account number and 
-bank code.
-
-
-**Returns**
-
-`string`
-
-**Example**
+Alternatively, if you use `endroid/qr-code`, you can call `getQrImage()` to get an instance of `\Endroid\QrCode\QrCode`.
 
 ```php
 <?php
 
 use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
+use Rikudou\Iban\Iban\IBAN;
 
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353'));
-$myIBAN = $payment->getIBAN();
-```
+$payment = new QrPayment(new IBAN('SK6807200002891987426353'));
 
-### getQrString()
-
-Returns the string that should be encoded in QR image.
-
-**Returns**
-
-`string`
-
-**Example**
-
-```php
-<?php
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentOptions;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
-
-$payment = QrPayment::fromIBAN(
-    new IbanBicPair('SK6807200002891987426353')
-)->setOptions([
-  QrPaymentOptions::AMOUNT => 100,
-  QrPaymentOptions::VARIABLE_SYMBOL => 1502,
-  QrPaymentOptions::DUE_DATE => new DateTime('+14 days')    
-]);
+$payment
+    ->setAmount(500)
+    ->setVariableSymbol(123456)
+    ->setDueDate(new DateTime('+1 week'))
+;
 
 $qrString = $payment->getQrString();
-```
 
-### static fromIBAN()
+// $qrString now holds the string to embed inside the QR code, in this example:
+// 0004U0001M8GLP3E8KPT058IQ99QISMB02IH36MOD4BCKQQGVDE4641AOA2NURPCOPSALFG0LPG1C6N0E2JMC7RG2F4L2E57OCSHOUROGHOC8VTTPHHRFHU6VFTM8N80
 
-Returns new instance of the payment object created from IBAN.
+$qrCode = $payment->getQrImage();
 
-**Params**
-
-> Passing string as the $iban argument is deprecated as of 2.5.0
-
-- `IbanBicPair|string $iban` - The IBAN of the account
-
-**Returns**
-
-Returns new instance.
-
-**Example**
-
-```php
-<?php
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\Structs\IbanBicPair;
-
-$payment = QrPayment::fromIBAN(new IbanBicPair('SK6807200002891987426353'));
-// do all the other stuff
-```
-
-### static fromIBANs()
-
-Returns new instance of the payment object with multiple IBANs.
-
-**Params**
-
-- `IbanBicPair[] $ibans` - array of `IbanBicPair` objects
-
-**Returns**
-
-Returns new instance.
-
-### addIban()
-
-Adds another IBAN to the payment object. Duplicate IBANs will
-be discarded silently (e.g. you can add the same IBAN multiple
-times, it will be added only once).
-
-**Params**
-
-- `IbanBicPair $iban` - the IBAN to add
-
-**Returns**
-
-Returns itself.
-
-### removeIban()
-
-Removes the IBAN from payment. If the IBAN is not present,
-does nothing (e.g. you don't need to check whether the IBAN
-was actually added to payment before attempting to remove).
-
-**Params**
-
-- `IbanBicPair $iban` - the IBAN to remove
-
-**Returns**
-
-Returns itself.
-
-### getIbans()
-
-Returns all IBANs in array.
-
-**Returns**
-
-`IbanBicPair[]` (e.g. array of `IbanBicPair`).
-
-### setIbans()
-
-Sets all the IBANs for payment, replaces any previous IBANs.
-
-**Params**
-
-- `IbanBicPair[] $ibans` - the array with IBANs
-
-**Returns**
-
-Returns itself.
-
-### getQrImage()
-
-Returns a Qr code via third-party library.
-
-**Params**
-
-- `bool $setPngHeader` - if true, this method calls `header()` function to set
-content type to image/png, defaults to false
-
-**Returns**
-
-`\Endroid\QrCode\QrCode`
-
-**Example**
-
-```php
-<?php
-
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentOptions;
-
-$payment = QrPayment::fromIBAN("SK6807200002891987426353")->setOptions([
-  QrPaymentOptions::AMOUNT => 100
-]);
-
-$payment->getQrImage(true) // sets the content-type and renders
-    ->writeString();
+// send to browser
+header('Content-Type: ' . $qrCode->getContentType());
+echo $qrCode->writeString();
 
 ```
 
-### getXzBinary()
+### Exceptions
 
-Returns the path to the `xz` binary. If the binary is not set via `setXzBinary()`
-it tries to get the `xz` binary path from system.
+All exceptions extend the base `\rikudou\SkQrPayment\Exception\QrPaymentException`.
 
-Throws exception if neither succeeds.
-
-**Returns**
-
-`string`
-
-**Example**
-
-```php
-<?php
-
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentException;
-
-$payment = QrPayment::fromIBAN("SK6807200002891987426353");
-
-try {
-  $payment->getXzBinary();
-} catch (QrPaymentException $exception) {
-  // the xz binary was not found in PATH
-}
-
-```
-
-### setXzBinary()
-
-**Params**
-
-- `string $binaryPath` - the path to the `xz` binary
-
-**Returns**
-
-Returns itself, you can use this method for chaining.
-
-**Example**
-
-```php
-<?php
-
-use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\QrPaymentException;
-
-$payment = QrPayment::fromIBAN("SK6807200002891987426353");
-
-echo $payment->getXzBinary(); // prints /usr/bin/xz or something similar
-$payment->setXzBinary("/path/to/xz");
-echo $payment->getXzBinary(); // prints /path/to/xz
-
-```
-
-### Options
-
-> Direct access to properties (e.g. `$payment->amount = 100`) was deprecated
-as of 2.4.0
-
-This is a list of options you can set.
-
-- `int variableSymbol` - the variable symbol, has no default
-- `int specificSymbol` - the specific symbol, has no default
-- `int constantSymbol` - the constant symbol, has no default
-- `string currency` - three letter code for currency, defaults to `EUR`
-- `string comment` - the payment comment, has no default
-- `string|DateTime dueDate` - the due date for payment, should be an instance of
-`DateTime` class or a string that can be parsed by `strtotime()`, has no default
-- `float amount` - the amount for the payment, can't have more than 2 decimal places,
-has no default
-- `country` - two letter code for country, defaults to `SK`
-
-All of these options can be set using the `QrPaymentOptions` helper class as constants
-for constructor or `setOptions()` or as methods.
-
-For example, the `amount` can be set in array using the constant
-`QrPaymentOptions::AMOUNT` or using the method `setAmount()`.
+- `\rikudou\SkQrPayment\Exception\DictionaryNotFoundException` - when you don't provide a BIC and there is no map for
+given country code (currently only `CZ` and `SK`)
+    - extends `\rikudou\SkQrPayment\Exception\BicNotFoundException`
+- `\rikudou\SkQrPayment\Exception\BicNotFoundException` - when you don't provide a BIC and the bank is not found in
+the provided maps
+- `\rikudou\SkQrPayment\Exception\InvalidTypeException` - when you try to create an instance using `fromIBAN()` and
+the IBAN is not an instance of `QrPaymentInterface` or a string
+- `\rikudou\SkQrPayment\Exception\QrPaymentException` - the base exception
+    - when you call `getQrImage()` and don't have the `endroid/qr-code` library installed
+    - when you call `getQrString()` without providing any IBANs
+    - when you call `getQrString()` or `getXzBinary()` and the `xz` binary is not present on filesystem
+    - when you create instance of `IbanBicPair` with an argument that is not instance of `IbanInterface` nor string 
+    - when you create instance of `IbanBicPair` or call `getQrString()` and any of the IBANs is not valid
