@@ -9,10 +9,10 @@ final class InvalidTypeException extends QrPaymentException
     /**
      * InvalidTypeException constructor.
      *
-     * @param string|array   $expected
-     * @param mixed          $actual
-     * @param int            $code
-     * @param Throwable|null $previous
+     * @param string|array<string> $expected
+     * @param mixed                $actual
+     * @param int                  $code
+     * @param Throwable|null       $previous
      */
     public function __construct($expected, $actual, $code = 0, Throwable $previous = null)
     {
@@ -32,6 +32,11 @@ final class InvalidTypeException extends QrPaymentException
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * @param mixed $variable
+     *
+     * @return string
+     */
     private function getType($variable): string
     {
         if (is_object($variable)) {

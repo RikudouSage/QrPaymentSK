@@ -24,7 +24,7 @@ class QrPaymentTest extends TestCase
      */
     private $instance;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->instance = new QrPayment(new IBAN(self::VALID_IBAN_1), new IBAN(self::VALID_IBAN_2));
     }

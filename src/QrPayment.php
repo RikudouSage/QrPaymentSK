@@ -88,7 +88,7 @@ final class QrPayment implements QrPaymentInterface
      * Specifies options in array in format:
      * property_name => value
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      *
      * @return $this
      */

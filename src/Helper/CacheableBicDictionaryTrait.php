@@ -7,6 +7,9 @@ use rikudou\SkQrPayment\Exception\CacheException;
 
 trait CacheableBicDictionaryTrait
 {
+    /**
+     * @var array<string,string>
+     */
     private $cache = [];
 
     /**
@@ -27,7 +30,7 @@ trait CacheableBicDictionaryTrait
      * @param IbanInterface $iban
      * @param string        $bic
      */
-    private function cacheResult(IbanInterface $iban, string $bic)
+    private function cacheResult(IbanInterface $iban, string $bic): void
     {
         $this->cache[$iban->asString()] = $bic;
     }

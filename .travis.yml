@@ -3,21 +3,18 @@ dist: xenial
 
 matrix:
   include:
-    - php: '7.1'
-      env:
-        - USE_FIXER="1"
-        - USE_PHPSTAN="1"
     - php: '7.2'
       env:
-#        - USE_COVERAGE="1"
         - USE_PHPSTAN="1"
         - USE_FIXER="1"
-#        - PHPUNIT_FLAGS="--coverage-clover ./tmp/clover.xml"
     - php: '7.3'
       env:
         - USE_PHPSTAN="1"
         - USE_FIXER="1"
-#        - COMPOSER_FLAGS="--ignore-platform-reqs"
+    - php: '7.4'
+      env:
+        - USE_FIXER="1"
+        - USE_PHPSTAN="1"
 
 cache:
   directories:
