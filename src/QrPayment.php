@@ -290,11 +290,11 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int $variableSymbol
+     * @param int|null $variableSymbol
      *
      * @return QrPayment
      */
-    public function setVariableSymbol(int $variableSymbol): self
+    public function setVariableSymbol(?int $variableSymbol): self
     {
         $this->variableSymbol = $variableSymbol;
 
@@ -302,11 +302,11 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int $specificSymbol
+     * @param int|null $specificSymbol
      *
      * @return QrPayment
      */
-    public function setSpecificSymbol(int $specificSymbol): self
+    public function setSpecificSymbol(?int $specificSymbol): self
     {
         $this->specificSymbol = $specificSymbol;
 
@@ -318,7 +318,7 @@ final class QrPayment implements QrPaymentInterface
      *
      * @return QrPayment
      */
-    public function setConstantSymbol(int $constantSymbol): self
+    public function setConstantSymbol(?int $constantSymbol): self
     {
         $this->constantSymbol = $constantSymbol;
 
@@ -366,7 +366,7 @@ final class QrPayment implements QrPaymentInterface
      *
      * @return QrPayment
      */
-    public function setDueDate(DateTimeInterface $dueDate): self
+    public function setDueDate(?DateTimeInterface $dueDate): self
     {
         $this->dueDate = $dueDate;
 
@@ -414,7 +414,7 @@ final class QrPayment implements QrPaymentInterface
      *
      * @return $this
      */
-    public function setXzBinary(string $binaryPath): self
+    public function setXzBinary(?string $binaryPath): self
     {
         $this->xzPath = $binaryPath;
 
