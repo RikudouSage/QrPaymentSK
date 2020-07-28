@@ -11,6 +11,8 @@ use Rikudou\QrPayment\QrPaymentInterface;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
+use rikudou\SkQrPayment\Xz\XzBinaryLocator;
+use rikudou\SkQrPayment\Xz\XzBinaryLocatorInterface;
 
 final class QrPayment implements QrPaymentInterface
 {
@@ -65,14 +67,14 @@ final class QrPayment implements QrPaymentInterface
     private $country = 'SK';
 
     /**
-     * @var string|null
-     */
-    private $xzPath = null;
-
-    /**
      * @var string
      */
     private $payeeName = '';
+
+    /**
+     * @var XzBinaryLocatorInterface
+     */
+    private $xzBinaryLocator;
 
     /**
      * QrPayment constructor.
@@ -82,6 +84,7 @@ final class QrPayment implements QrPaymentInterface
     public function __construct(IbanInterface ...$ibans)
     {
         $this->setIbans($ibans);
+        $this->xzBinaryLocator = new XzBinaryLocator(null);
     }
 
     /**
@@ -410,13 +413,33 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
+     * @return XzBinaryLocatorInterface
+     */
+    public function getXzBinaryLocator(): XzBinaryLocatorInterface
+    {
+        return $this->xzBinaryLocator;
+    }
+
+    /**
+     * @param XzBinaryLocatorInterface $xzBinaryLocator
+     *
+     * @return QrPayment
+     */
+    public function setXzBinaryLocator(XzBinaryLocatorInterface $xzBinaryLocator): QrPayment
+    {
+        $this->xzBinaryLocator = $xzBinaryLocator;
+
+        return $this;
+    }
+
+    /**
      * @param string $binaryPath
      *
      * @return $this
      */
     public function setXzBinary(?string $binaryPath): self
     {
-        $this->xzPath = $binaryPath;
+        $this->xzBinaryLocator = new XzBinaryLocator($binaryPath);
 
         return $this;
     }
@@ -428,21 +451,7 @@ final class QrPayment implements QrPaymentInterface
      */
     public function getXzBinary(): string
     {
-        if (is_null($this->xzPath)) {
-            exec('which xz', $output, $return);
-            if ($return !== 0) {
-                throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()");
-            }
-            if (!isset($output[0])) {
-                throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()");
-            }
-            $this->xzPath = $output[0];
-        }
-        if (!file_exists($this->xzPath)) {
-            throw new QrPaymentException("The path '{$this->xzPath}' to 'xz' binary is invalid");
-        }
-
-        return $this->xzPath;
+        return $this->xzBinaryLocator->getXzBinary();
     }
 
     /**
