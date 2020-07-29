@@ -179,6 +179,9 @@ Since the Pay by Square standard uses lzma1 which has no php binding, the xz bin
 If you have it in the standard PATH, this library should find it on its own, if not you have to set the path manually
 using `setXzBinary()`.
 
+If you want to implement custom logic for getting the binary path, you can create a custom class implementing
+`\rikudou\SkQrPayment\Xz\XzBinaryLocatorInterface` and set the object via `setXzBinaryLocator()` in the payment object.
+
 ### Getting the result
 
 Once you configured all your options, simply call `getQrString()` and process it using your favorite qr code library.
