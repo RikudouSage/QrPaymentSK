@@ -19,7 +19,7 @@ final class XzBinaryLocator implements XzBinaryLocatorInterface
     public function getXzBinary(): string
     {
         if ($this->path === null) {
-            if ( strpos(php_uname('s'), 'Windows') !== false ) {
+            if (strpos(php_uname('s'), 'Windows') !== false) {
                 exec('where xz', $output, $return);
             } else {
                 exec('which xz', $output, $return);
