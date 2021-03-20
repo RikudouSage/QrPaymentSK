@@ -11,8 +11,8 @@ use Rikudou\QrPayment\QrPaymentInterface;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
-use rikudou\SkQrPayment\Xz\WindowsXzBinaryLocator;
 use rikudou\SkQrPayment\Xz\LinuxXzBinaryLocator;
+use rikudou\SkQrPayment\Xz\WindowsXzBinaryLocator;
 use rikudou\SkQrPayment\Xz\XzBinaryLocatorInterface;
 
 final class QrPayment implements QrPaymentInterface
