@@ -4,7 +4,7 @@ namespace rikudou\SkQrPayment\Xz;
 
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 
-final class XzBinaryLocator implements XzBinaryLocatorInterface
+final class LinuxXzBinaryLocator implements XzBinaryLocatorInterface
 {
     /**
      * @var string|null
@@ -19,12 +19,7 @@ final class XzBinaryLocator implements XzBinaryLocatorInterface
     public function getXzBinary(): string
     {
         if ($this->path === null) {
-            if (strpos(php_uname('s'), 'Windows') !== false) {
-                exec('where xz', $output, $return);
-            } else {
-                exec('which xz', $output, $return);
-            }
-
+            exec('which xz', $output, $return);
             if ($return !== 0) {
                 throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()");
             }
