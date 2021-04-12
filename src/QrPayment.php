@@ -434,20 +434,6 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param string|null $binaryPath
-     *
-     * @return WindowsXzBinaryLocator|LinuxXzBinaryLocator
-     */
-    public function getXzBinaryLocatorByOs(?string $binaryPath = null)
-    {
-        if (strpos(php_uname('s'), 'Windows') !== false) {
-            return new WindowsXzBinaryLocator($binaryPath);
-        } else {
-            return new LinuxXzBinaryLocator($binaryPath);
-        }
-    }
-
-    /**
      * @param string $binaryPath
      *
      * @return $this
@@ -554,6 +540,20 @@ final class QrPayment implements QrPaymentInterface
         }
 
         return $this->dueDate;
+    }
+
+    /**
+     * @param string|null $binaryPath
+     *
+     * @return XzBinaryLocatorInterface
+     */
+    private function getXzBinaryLocatorByOs(?string $binaryPath = null)
+    {
+        if (strpos(php_uname('s'), 'Windows') !== false) {
+            return new WindowsXzBinaryLocator($binaryPath);
+        } else {
+            return new LinuxXzBinaryLocator($binaryPath);
+        }
     }
 
     /**

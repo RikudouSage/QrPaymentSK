@@ -12,7 +12,7 @@ use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Payment\QrPaymentOptions;
 use rikudou\SkQrPayment\QrPayment;
-use rikudou\SkQrPayment\Xz\LinuxXzBinaryLocator;
+use rikudou\SkQrPayment\Xz\XzBinaryLocator;
 use TypeError;
 
 final class QrPaymentTest extends TestCase
@@ -204,9 +204,9 @@ final class QrPaymentTest extends TestCase
         QrPayment::fromIBAN(123);
     }
 
-    public function testGetXzBinaryLocator()
+    public function testXzBinaryLocator()
     {
-        $locator = new LinuxXzBinaryLocator(null);
+        $locator = new XzBinaryLocator(null);
         $this->instance->setXzBinaryLocator($locator);
         self::assertTrue($locator === $this->instance->getXzBinaryLocator());
     }
