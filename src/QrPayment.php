@@ -11,7 +11,8 @@ use Rikudou\QrPayment\QrPaymentInterface;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
-use rikudou\SkQrPayment\Xz\XzBinaryLocator;
+use rikudou\SkQrPayment\Xz\LinuxXzBinaryLocator;
+use rikudou\SkQrPayment\Xz\WindowsXzBinaryLocator;
 use rikudou\SkQrPayment\Xz\XzBinaryLocatorInterface;
 
 final class QrPayment implements QrPaymentInterface
@@ -94,7 +95,7 @@ final class QrPayment implements QrPaymentInterface
     public function __construct(IbanInterface ...$ibans)
     {
         $this->setIbans($ibans);
-        $this->xzBinaryLocator = new XzBinaryLocator(null);
+        $this->xzBinaryLocator = $this->getXzBinaryLocatorByOs(null);
     }
 
     /**
@@ -473,7 +474,7 @@ final class QrPayment implements QrPaymentInterface
      */
     public function setXzBinary(?string $binaryPath): self
     {
-        $this->xzBinaryLocator = new XzBinaryLocator($binaryPath);
+        $this->xzBinaryLocator = $this->getXzBinaryLocatorByOs($binaryPath);
 
         return $this;
     }
@@ -573,6 +574,20 @@ final class QrPayment implements QrPaymentInterface
         }
 
         return $this->dueDate;
+    }
+
+    /**
+     * @param string|null $binaryPath
+     *
+     * @return XzBinaryLocatorInterface
+     */
+    private function getXzBinaryLocatorByOs(?string $binaryPath = null)
+    {
+        if (strpos(php_uname('s'), 'Windows') !== false) {
+            return new WindowsXzBinaryLocator($binaryPath);
+        } else {
+            return new LinuxXzBinaryLocator($binaryPath);
+        }
     }
 
     /**

@@ -6,16 +6,16 @@ use DateTime;
 use DateTimeInterface;
 use Endroid\QrCode\QrCode;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use Rikudou\Iban\Iban\IBAN;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Payment\QrPaymentOptions;
 use rikudou\SkQrPayment\QrPayment;
-use PHPUnit\Framework\TestCase;
 use rikudou\SkQrPayment\Xz\XzBinaryLocator;
 use TypeError;
 
-class QrPaymentTest extends TestCase
+final class QrPaymentTest extends TestCase
 {
     private const VALID_IBAN_1 = 'CZ7061000000001030900063';
     private const VALID_IBAN_2 = 'SK6807200002891987426353';
@@ -34,7 +34,7 @@ class QrPaymentTest extends TestCase
     {
         $expectedIbans = [
             self::VALID_IBAN_1,
-            self::VALID_IBAN_2
+            self::VALID_IBAN_2,
         ];
 
         $ibans = $this->instance->getIbans();
@@ -64,35 +64,35 @@ class QrPaymentTest extends TestCase
             QrPaymentOptions::VARIABLE_SYMBOL => 1,
             QrPaymentOptions::SPECIFIC_SYMBOL => 2,
             QrPaymentOptions::CONSTANT_SYMBOL => 3,
-            QrPaymentOptions::CURRENCY => "CZK",
-            QrPaymentOptions::COMMENT => "test",
-            QrPaymentOptions::INTERNAL_ID => "123",
+            QrPaymentOptions::CURRENCY => 'CZK',
+            QrPaymentOptions::COMMENT => 'test',
+            QrPaymentOptions::INTERNAL_ID => '123',
             QrPaymentOptions::DUE_DATE => new DateTime('2019-01-01'),
             QrPaymentOptions::AMOUNT => 100,
-            QrPaymentOptions::COUNTRY => "CZ",
-            QrPaymentOptions::PAYEE_NAME => "Random Dude"
+            QrPaymentOptions::COUNTRY => 'CZ',
+            QrPaymentOptions::PAYEE_NAME => 'Random Dude',
         ]);
 
-        self::assertEquals("/tmp", $this->instance->getXzBinary());
+        self::assertEquals('/tmp', $this->instance->getXzBinary());
         self::assertCount(2, $this->instance->getIbans());
         self::assertEquals(1, $this->instance->getVariableSymbol());
         self::assertEquals(2, $this->instance->getSpecificSymbol());
         self::assertEquals(3, $this->instance->getConstantSymbol());
-        self::assertEquals("CZK", $this->instance->getCurrency());
-        self::assertEquals("test", $this->instance->getComment());
-        self::assertEquals("123", $this->instance->getInternalId());
+        self::assertEquals('CZK', $this->instance->getCurrency());
+        self::assertEquals('test', $this->instance->getComment());
+        self::assertEquals('123', $this->instance->getInternalId());
         self::assertEquals(
-            (new DateTime("2019-01-01"))->format('c'),
+            (new DateTime('2019-01-01'))->format('c'),
             $this->instance->getDueDate()->format('c')
         );
         self::assertEquals(100, $this->instance->getAmount());
-        self::assertEquals("CZ", $this->instance->getCountry());
-        self::assertEquals("Random Dude", $this->instance->getPayeeName());
+        self::assertEquals('CZ', $this->instance->getCountry());
+        self::assertEquals('Random Dude', $this->instance->getPayeeName());
 
         // test that values from array are type checked
         $this->expectException(TypeError::class);
         $this->instance->setOptions([
-            QrPaymentOptions::VARIABLE_SYMBOL => 'test'
+            QrPaymentOptions::VARIABLE_SYMBOL => 'test',
         ]);
     }
 
@@ -100,7 +100,7 @@ class QrPaymentTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->instance->setOptions([
-            'randomKey' => 'randomValue'
+            'randomKey' => 'randomValue',
         ]);
     }
 
@@ -139,9 +139,10 @@ class QrPaymentTest extends TestCase
 
     public function testGetXzBinaryAutomatic()
     {
-        exec("which xz", $xz, $exitCode);
+        exec('which xz', $xz, $exitCode);
         if ($exitCode !== 0) {
-            self::markTestSkipped("The xz binary not found, skipping test");
+            self::markTestSkipped('The xz binary not found, skipping test');
+
             return;
         }
         $xz = $xz[0];
@@ -151,13 +152,13 @@ class QrPaymentTest extends TestCase
 
     public function testGetXzBinaryManual()
     {
-        $this->instance->setXzBinary("/tmp");
-        self::assertEquals("/tmp", $this->instance->getXzBinary());
+        $this->instance->setXzBinary('/tmp');
+        self::assertEquals('/tmp', $this->instance->getXzBinary());
     }
 
     public function testGetXzBinaryNonexistentPath()
     {
-        $this->instance->setXzBinary("/tmp/path/that/hopefully/doesnt/exist");
+        $this->instance->setXzBinary('/tmp/path/that/hopefully/doesnt/exist');
         $this->expectException(QrPaymentException::class);
         $this->instance->getXzBinary();
     }
@@ -173,7 +174,8 @@ class QrPaymentTest extends TestCase
     public function testGetQrImage()
     {
         if (!class_exists(QrCode::class)) {
-            self::markTestSkipped("The QR code class does not exist, cannot test");
+            self::markTestSkipped('The QR code class does not exist, cannot test');
+
             return;
         }
         self::assertInstanceOf(QrCode::class, $this->instance->getQrImage());
@@ -182,7 +184,8 @@ class QrPaymentTest extends TestCase
     public function testGetQrImageMissing()
     {
         if (class_exists(QrCode::class)) {
-            self::markTestSkipped("The QR code class exists, cannot test for exception");
+            self::markTestSkipped('The QR code class exists, cannot test for exception');
+
             return;
         }
         $this->expectException(QrPaymentException::class);
@@ -201,7 +204,7 @@ class QrPaymentTest extends TestCase
         QrPayment::fromIBAN(123);
     }
 
-    public function testGetXzBinaryLocator()
+    public function testXzBinaryLocator()
     {
         $locator = new XzBinaryLocator(null);
         $this->instance->setXzBinaryLocator($locator);
