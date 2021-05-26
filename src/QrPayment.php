@@ -72,6 +72,16 @@ final class QrPayment implements QrPaymentInterface
     private $payeeName = '';
 
     /**
+     * @var string
+     */
+    private $payeeAddressLine1 = '';
+
+    /**
+     * @var string
+     */
+    private $payeeAddressLine2 = '';
+
+    /**
      * @var XzBinaryLocatorInterface
      */
     private $xzBinaryLocator;
@@ -150,8 +160,8 @@ final class QrPayment implements QrPaymentInterface
         $dataArray[2][] = 0; // standing order
         $dataArray[2][] = 0; // direct debit
         $dataArray[2][] = $this->payeeName;
-        $dataArray[2][] = ''; // payee's address line 1
-        $dataArray[2][] = ''; // payee's address line 2
+        $dataArray[2][] = $this->payeeAddressLine1;
+        $dataArray[2][] = $this->payeeAddressLine2;
 
         $dataArray[2] = implode("\t", $dataArray[2]);
 
@@ -408,6 +418,30 @@ final class QrPayment implements QrPaymentInterface
     public function setPayeeName(string $payeeName): QrPayment
     {
         $this->payeeName = $payeeName;
+
+        return $this;
+    }
+
+    /**
+     * @param string $addressLine
+     *
+     * @return QrPayment
+     */
+    public function setPayeeAddressLine1(string $addressLine): QrPayment
+    {
+        $this->payeeAddressLine1 = $addressLine;
+
+        return $this;
+    }
+
+    /**
+     * @param string $addressLine
+     *
+     * @return QrPayment
+     */
+    public function setPayeeAddressLine2(string $addressLine): QrPayment
+    {
+        $this->payeeAddressLine2 = $addressLine;
 
         return $this;
     }
