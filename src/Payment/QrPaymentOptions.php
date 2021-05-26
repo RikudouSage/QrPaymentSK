@@ -16,4 +16,6 @@ final class QrPaymentOptions
     public const AMOUNT = 'amount';
     public const COUNTRY = 'country';
     public const PAYEE_NAME = 'payeeName';
+    public const PAYEE_ADDRESS_LINE1 = 'payeeAddressLine1';
+    public const PAYEE_ADDRESS_LINE2 = 'payeeAddressLine2';
 }
