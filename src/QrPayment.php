@@ -22,17 +22,17 @@ final class QrPayment implements QrPaymentInterface
     private $ibans = [];
 
     /**
-     * @var int|null
+     * @var string|null
      */
     private $variableSymbol = null;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     private $specificSymbol = null;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     private $constantSymbol = null;
 
@@ -303,11 +303,11 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int|null $variableSymbol
+     * @param string|null $variableSymbol
      *
      * @return QrPayment
      */
-    public function setVariableSymbol(?int $variableSymbol): self
+    public function setVariableSymbol(?string $variableSymbol): self
     {
         $this->variableSymbol = $variableSymbol;
 
@@ -315,11 +315,11 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int|null $specificSymbol
+     * @param string|null $specificSymbol
      *
      * @return QrPayment
      */
-    public function setSpecificSymbol(?int $specificSymbol): self
+    public function setSpecificSymbol(?string $specificSymbol): self
     {
         $this->specificSymbol = $specificSymbol;
 
@@ -327,11 +327,11 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int $constantSymbol
+     * @param string $constantSymbol
      *
      * @return QrPayment
      */
-    public function setConstantSymbol(?int $constantSymbol): self
+    public function setConstantSymbol(?string $constantSymbol): self
     {
         $this->constantSymbol = $constantSymbol;
 
@@ -489,25 +489,25 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getVariableSymbol(): ?int
+    public function getVariableSymbol(): ?string
     {
         return $this->variableSymbol;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getSpecificSymbol(): ?int
+    public function getSpecificSymbol(): ?string
     {
         return $this->specificSymbol;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getConstantSymbol(): ?int
+    public function getConstantSymbol(): ?string
     {
         return $this->constantSymbol;
     }
