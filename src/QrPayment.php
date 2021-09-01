@@ -210,6 +210,7 @@ final class QrPayment implements QrPaymentInterface
         }
 
         $length = $length / 5;
+        assert(is_int($length));
 
         $hashedData = str_repeat('_', $length);
 

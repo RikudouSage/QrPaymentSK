@@ -1,6 +1,7 @@
 # QR code payment (SK) - Pay by Square standard
 
-![Build Status](https://travis-ci.com/RikudouSage/QrPaymentSK.svg?branch=master "master build status")
+[![Tests](https://github.com/RikudouSage/QrPaymentSK/actions/workflows/test.yaml/badge.svg)](https://github.com/RikudouSage/QrPaymentSK/actions/workflows/test.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/RikudouSage/QrPaymentSK/badge.svg?branch=master)](https://coveralls.io/github/RikudouSage/QrPaymentSK?branch=master)
 [![Download](https://img.shields.io/packagist/dt/rikudou/skqrpayment.svg)](https://packagist.org/packages/rikudou/skqrpayment)
 
 This library generates a string that can be embedded into QR code and is recognized by all Slovak banks.
