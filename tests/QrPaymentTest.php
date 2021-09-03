@@ -207,4 +207,67 @@ class QrPaymentTest extends TestCase
         $this->instance->setXzBinaryLocator($locator);
         self::assertTrue($locator === $this->instance->getXzBinaryLocator());
     }
+
+    public function testSetVariableSymbol()
+    {
+        $this->instance->setVariableSymbol(123);
+        self::assertSame(123, $this->instance->getVariableSymbol());
+
+        $this->instance->setVariableSymbol('123');
+        self::assertSame('123', $this->instance->getVariableSymbol());
+
+        $stringable = new class {
+            public function __toString()
+            {
+                return '123';
+            }
+        };
+        $this->instance->setVariableSymbol($stringable);
+        self::assertSame('123', $this->instance->getVariableSymbol());
+
+        $this->expectException(TypeError::class);
+        $this->instance->setVariableSymbol(new \stdClass());
+    }
+
+    public function testSetSpecificSymbol()
+    {
+        $this->instance->setSpecificSymbol(123);
+        self::assertSame(123, $this->instance->getSpecificSymbol());
+
+        $this->instance->setSpecificSymbol('123');
+        self::assertSame('123', $this->instance->getSpecificSymbol());
+
+        $stringable = new class {
+            public function __toString()
+            {
+                return '123';
+            }
+        };
+        $this->instance->setSpecificSymbol($stringable);
+        self::assertSame('123', $this->instance->getSpecificSymbol());
+
+        $this->expectException(TypeError::class);
+        $this->instance->setSpecificSymbol(new \stdClass());
+    }
+
+    public function testSetConstantSymbol()
+    {
+        $this->instance->setConstantSymbol(123);
+        self::assertSame(123, $this->instance->getConstantSymbol());
+
+        $this->instance->setConstantSymbol('123');
+        self::assertSame('123', $this->instance->getConstantSymbol());
+
+        $stringable = new class {
+            public function __toString()
+            {
+                return '123';
+            }
+        };
+        $this->instance->setConstantSymbol($stringable);
+        self::assertSame('123', $this->instance->getConstantSymbol());
+
+        $this->expectException(TypeError::class);
+        $this->instance->setConstantSymbol(new \stdClass());
+    }
 }
