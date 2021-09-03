@@ -39,11 +39,6 @@
       "\\rikudou\\SkQrPayment\\Tests\\": "tests/"
     }
   },
-  "config": {
-    "platform": {
-      "php": "7.2.32"
-    }
-  },
   "scripts": {
     "fixer": "php-cs-fixer fix src --verbose",
     "phpstan": "phpstan analyse --level=max src",
