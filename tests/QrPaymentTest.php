@@ -92,7 +92,7 @@ class QrPaymentTest extends TestCase
         // test that values from array are type checked
         $this->expectException(TypeError::class);
         $this->instance->setOptions([
-            QrPaymentOptions::VARIABLE_SYMBOL => 'test'
+            QrPaymentOptions::VARIABLE_SYMBOL => new \stdClass(),
         ]);
     }
 
