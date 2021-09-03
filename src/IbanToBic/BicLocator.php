@@ -6,19 +6,19 @@ use Rikudou\Iban\Iban\IbanInterface;
 use rikudou\SkQrPayment\Exception\DictionaryNotFoundException;
 use rikudou\SkQrPayment\IbanToBic\Dictionary\BicDictionaryInterface;
 use rikudou\SkQrPayment\IbanToBic\Dictionary\CzechBicDictionary;
-use rikudou\SkQrPayment\IbanToBic\Dictionary\SlovakianBicDictionary;
+use rikudou\SkQrPayment\IbanToBic\Dictionary\SlovakBicDictionary;
 
 final class BicLocator
 {
     /**
      * @var BicDictionaryInterface[]
      */
-    private $dictionaries = [];
+    private $dictionaries;
 
     public function __construct()
     {
         $this->dictionaries = [
-            new SlovakianBicDictionary(),
+            new SlovakBicDictionary(),
             new CzechBicDictionary(),
         ];
     }
