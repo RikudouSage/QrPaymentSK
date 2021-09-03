@@ -1,3 +1,4 @@
 parameters:
+  treatPhpDocTypesAsCertain: false
   ignoreErrors:
     - '#Method rikudou\\SkQrPayment\\IbanToBic\\Dictionary\\.*?BicDictionary::getMap\(\) should return array<string, string> but returns array<int\|string, string>.#'

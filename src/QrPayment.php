@@ -13,6 +13,7 @@ use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
 use rikudou\SkQrPayment\Xz\XzBinaryLocator;
 use rikudou\SkQrPayment\Xz\XzBinaryLocatorInterface;
+use TypeError;
 
 final class QrPayment implements QrPaymentInterface
 {
@@ -22,17 +23,17 @@ final class QrPayment implements QrPaymentInterface
     private $ibans = [];
 
     /**
-     * @var int|null
+     * @var int|string|null
      */
     private $variableSymbol = null;
 
     /**
-     * @var int|null
+     * @var int|string|null
      */
     private $specificSymbol = null;
 
     /**
-     * @var int|null
+     * @var int|string|null
      */
     private $constantSymbol = null;
 
@@ -304,36 +305,66 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int|null $variableSymbol
+     * @param int|string|null $variableSymbol
      *
      * @return QrPayment
      */
-    public function setVariableSymbol(?int $variableSymbol): self
+    public function setVariableSymbol($variableSymbol): self
     {
+        if (is_object($variableSymbol) && method_exists($variableSymbol, '__toString')) {
+            $variableSymbol = (string) $variableSymbol;
+        }
+        if (!is_string($variableSymbol) && !is_int($variableSymbol) && $variableSymbol !== null) {
+            throw new TypeError(sprintf(
+                'Argument 1 passed to %s must be of the type string|int|null, %s given',
+                __METHOD__,
+                gettype($variableSymbol)
+            ));
+        }
         $this->variableSymbol = $variableSymbol;
 
         return $this;
     }
 
     /**
-     * @param int|null $specificSymbol
+     * @param int|string|null $specificSymbol
      *
      * @return QrPayment
      */
-    public function setSpecificSymbol(?int $specificSymbol): self
+    public function setSpecificSymbol($specificSymbol): self
     {
+        if (is_object($specificSymbol) && method_exists($specificSymbol, '__toString')) {
+            $specificSymbol = (string) $specificSymbol;
+        }
+        if (!is_string($specificSymbol) && !is_int($specificSymbol) && $specificSymbol !== null) {
+            throw new TypeError(sprintf(
+                'Argument 1 passed to %s must be of the type string|int|null, %s given',
+                __METHOD__,
+                gettype($specificSymbol)
+            ));
+        }
         $this->specificSymbol = $specificSymbol;
 
         return $this;
     }
 
     /**
-     * @param int $constantSymbol
+     * @param int|string|null $constantSymbol
      *
      * @return QrPayment
      */
-    public function setConstantSymbol(?int $constantSymbol): self
+    public function setConstantSymbol($constantSymbol): self
     {
+        if (is_object($constantSymbol) && method_exists($constantSymbol, '__toString')) {
+            $constantSymbol = (string) $constantSymbol;
+        }
+        if (!is_string($constantSymbol) && !is_int($constantSymbol) && $constantSymbol !== null) {
+            throw new TypeError(sprintf(
+                'Argument 1 passed to %s must be of the type string|int|null, %s given',
+                __METHOD__,
+                gettype($constantSymbol)
+            ));
+        }
         $this->constantSymbol = $constantSymbol;
 
         return $this;
@@ -490,25 +521,25 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
-    public function getVariableSymbol(): ?int
+    public function getVariableSymbol()
     {
         return $this->variableSymbol;
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
-    public function getSpecificSymbol(): ?int
+    public function getSpecificSymbol()
     {
         return $this->specificSymbol;
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
-    public function getConstantSymbol(): ?int
+    public function getConstantSymbol()
     {
         return $this->constantSymbol;
     }

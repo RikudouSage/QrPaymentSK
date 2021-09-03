@@ -1,6 +1,8 @@
 <?php
 
-return PhpCsFixer\Config::create()
+use PhpCsFixer\Config;
+
+return (new Config())
     ->setRules([
         '@PSR2' => true,
         'array_syntax' => ['syntax' => 'short'],
@@ -20,8 +22,8 @@ return PhpCsFixer\Config::create()
         'explicit_indirect_variable' => true,
         'explicit_string_variable' => true,
         'final_internal_class' => [
-            'consider-absent-docblock-as-internal-class' => true,
-            'annotation-black-list' => [
+            'consider_absent_docblock_as_internal_class' => true,
+            'annotation_exclude' => [
                 '@non-final',
             ]
         ],
