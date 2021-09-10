@@ -8,16 +8,12 @@ use rikudou\SkQrPayment\Exception\CacheException;
 trait CacheableBicDictionaryTrait
 {
     /**
-     * @var array<string,string>
+     * @var array<string, string>
      */
     private $cache = [];
 
     /**
      * Checks whether the BIC for given IBAN is already cached in memory
-     *
-     * @param IbanInterface $iban
-     *
-     * @return bool
      */
     private function isCached(IbanInterface $iban): bool
     {
@@ -26,9 +22,6 @@ trait CacheableBicDictionaryTrait
 
     /**
      * Caches the BIC relevant to given IBAN in memory
-     *
-     * @param IbanInterface $iban
-     * @param string        $bic
      */
     private function cacheResult(IbanInterface $iban, string $bic): void
     {
@@ -37,10 +30,6 @@ trait CacheableBicDictionaryTrait
 
     /**
      * If the BIC for given IBAN is already cached returns it, otherwise null
-     *
-     * @param IbanInterface $iban
-     *
-     * @return string
      */
     private function getCached(IbanInterface $iban): string
     {

@@ -24,10 +24,7 @@ final class IbanBicPair implements IbanInterface
     private $bic;
 
     /**
-     * BicIbanPair constructor.
-     *
      * @param string|IbanInterface $iban
-     * @param string|null          $bic
      *
      * @throws QrPaymentException
      */
@@ -54,17 +51,11 @@ final class IbanBicPair implements IbanInterface
         $this->bic = $bic;
     }
 
-    /**
-     * @return IbanInterface
-     */
     public function getIban(): IbanInterface
     {
         return $this->iban;
     }
 
-    /**
-     * @return string
-     */
     public function getBic(): string
     {
         return $this->bic;
@@ -72,8 +63,6 @@ final class IbanBicPair implements IbanInterface
 
     /**
      * Returns the resulting IBAN.
-     *
-     * @return string
      */
     public function asString(): string
     {
@@ -82,8 +71,6 @@ final class IbanBicPair implements IbanInterface
 
     /**
      * Returns the validator that checks whether the IBAN is valid.
-     *
-     * @return ValidatorInterface|null
      */
     public function getValidator(): ?ValidatorInterface
     {

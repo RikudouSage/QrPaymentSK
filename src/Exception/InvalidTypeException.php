@@ -7,12 +7,9 @@ use Throwable;
 final class InvalidTypeException extends QrPaymentException
 {
     /**
-     * InvalidTypeException constructor.
-     *
      * @param string|array<string> $expected
      * @param mixed                $actual
      * @param int                  $code
-     * @param Throwable|null       $previous
      */
     public function __construct($expected, $actual, $code = 0, Throwable $previous = null)
     {
@@ -34,8 +31,6 @@ final class InvalidTypeException extends QrPaymentException
 
     /**
      * @param mixed $variable
-     *
-     * @return string
      */
     private function getType($variable): string
     {

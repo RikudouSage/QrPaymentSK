@@ -10,9 +10,6 @@ abstract class AbstractBicDictionary implements BicDictionaryInterface
 {
     use CacheableBicDictionaryTrait;
 
-    /**
-     * @inheritDoc
-     */
     public function getBic(IbanInterface $iban): string
     {
         if ($this->isCached($iban)) {

@@ -5,21 +5,16 @@ namespace rikudou\SkQrPayment\IbanToBic\Dictionary;
 /**
  * @internal
  */
-final class SlovakianBicDictionary extends AbstractBicDictionary
+final class SlovakBicDictionary extends AbstractBicDictionary
 {
     /**
      * Returns the two-letter country code this dictionary is relevant to
-     *
-     * @return string
      */
     public function getCountryCode(): string
     {
         return 'SK';
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getMap(): array
     {
         return [

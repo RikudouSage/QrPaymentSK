@@ -9,17 +9,12 @@ final class CzechBicDictionary extends AbstractBicDictionary
 {
     /**
      * Returns the two-letter country code this dictionary is relevant to
-     *
-     * @return string
      */
     public function getCountryCode(): string
     {
         return 'CZ';
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getMap(): array
     {
         return [

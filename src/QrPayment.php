@@ -11,8 +11,10 @@ use Rikudou\QrPayment\QrPaymentInterface;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
+use rikudou\SkQrPayment\Payment\QrPaymentOptions;
 use rikudou\SkQrPayment\Xz\XzBinaryLocator;
 use rikudou\SkQrPayment\Xz\XzBinaryLocatorInterface;
+use TypeError;
 
 final class QrPayment implements QrPaymentInterface
 {
@@ -22,17 +24,17 @@ final class QrPayment implements QrPaymentInterface
     private $ibans = [];
 
     /**
-     * @var int|null
+     * @var int|string|null
      */
     private $variableSymbol = null;
 
     /**
-     * @var int|null
+     * @var int|string|null
      */
     private $specificSymbol = null;
 
     /**
-     * @var int|null
+     * @var int|string|null
      */
     private $constantSymbol = null;
 
@@ -87,8 +89,6 @@ final class QrPayment implements QrPaymentInterface
     private $xzBinaryLocator;
 
     /**
-     * QrPayment constructor.
-     *
      * @param IbanInterface ...$ibans
      */
     public function __construct(IbanInterface ...$ibans)
@@ -98,12 +98,12 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * Specifies options in array in format:
+     * Specifies options in format:
      * property_name => value
      *
-     * @param array<string,mixed> $options
+     * @param array<string, mixed> $options
      *
-     * @return $this
+     * @see QrPaymentOptions
      */
     public function setOptions(array $options): self
     {
@@ -123,8 +123,6 @@ final class QrPayment implements QrPaymentInterface
 
     /**
      * @throws QrPaymentException
-     *
-     * @return string
      */
     public function getQrString(): string
     {
@@ -229,8 +227,6 @@ final class QrPayment implements QrPaymentInterface
      * documentation
      *
      * @throws QrPaymentException
-     *
-     * @return QrCode
      */
     public function getQrImage(): QrCode
     {
@@ -243,8 +239,6 @@ final class QrPayment implements QrPaymentInterface
 
     /**
      * @param string|IbanInterface $iban
-     *
-     * @return static
      */
     public static function fromIBAN($iban): self
     {
@@ -257,7 +251,7 @@ final class QrPayment implements QrPaymentInterface
             ], $iban);
         }
 
-        return new static($iban);
+        return new self($iban);
     }
 
     public function addIban(IbanInterface $iban): self
@@ -288,8 +282,6 @@ final class QrPayment implements QrPaymentInterface
 
     /**
      * @param IbanInterface[] $ibans
-     *
-     * @return QrPayment
      */
     public function setIbans(array $ibans): self
     {
@@ -304,46 +296,65 @@ final class QrPayment implements QrPaymentInterface
     }
 
     /**
-     * @param int|null $variableSymbol
-     *
-     * @return QrPayment
+     * @param int|string|null $variableSymbol
      */
-    public function setVariableSymbol(?int $variableSymbol): self
+    public function setVariableSymbol($variableSymbol): self
     {
+        if (is_object($variableSymbol) && method_exists($variableSymbol, '__toString')) {
+            $variableSymbol = (string) $variableSymbol;
+        }
+        if (!is_string($variableSymbol) && !is_int($variableSymbol) && $variableSymbol !== null) {
+            throw new TypeError(sprintf(
+                'Argument 1 passed to %s must be of the type string|int|null, %s given',
+                __METHOD__,
+                gettype($variableSymbol)
+            ));
+        }
         $this->variableSymbol = $variableSymbol;
 
         return $this;
     }
 
     /**
-     * @param int|null $specificSymbol
-     *
-     * @return QrPayment
+     * @param int|string|null $specificSymbol
      */
-    public function setSpecificSymbol(?int $specificSymbol): self
+    public function setSpecificSymbol($specificSymbol): self
     {
+        if (is_object($specificSymbol) && method_exists($specificSymbol, '__toString')) {
+            $specificSymbol = (string) $specificSymbol;
+        }
+        if (!is_string($specificSymbol) && !is_int($specificSymbol) && $specificSymbol !== null) {
+            throw new TypeError(sprintf(
+                'Argument 1 passed to %s must be of the type string|int|null, %s given',
+                __METHOD__,
+                gettype($specificSymbol)
+            ));
+        }
         $this->specificSymbol = $specificSymbol;
 
         return $this;
     }
 
     /**
-     * @param int $constantSymbol
-     *
-     * @return QrPayment
+     * @param int|string|null $constantSymbol
      */
-    public function setConstantSymbol(?int $constantSymbol): self
+    public function setConstantSymbol($constantSymbol): self
     {
+        if (is_object($constantSymbol) && method_exists($constantSymbol, '__toString')) {
+            $constantSymbol = (string) $constantSymbol;
+        }
+        if (!is_string($constantSymbol) && !is_int($constantSymbol) && $constantSymbol !== null) {
+            throw new TypeError(sprintf(
+                'Argument 1 passed to %s must be of the type string|int|null, %s given',
+                __METHOD__,
+                gettype($constantSymbol)
+            ));
+        }
         $this->constantSymbol = $constantSymbol;
 
         return $this;
     }
 
-    /**
-     * @param string $currency
-     *
-     * @return QrPayment
-     */
     public function setCurrency(string $currency): self
     {
         $this->currency = $currency;
@@ -351,11 +362,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $comment
-     *
-     * @return QrPayment
-     */
     public function setComment(string $comment): self
     {
         $this->comment = $comment;
@@ -363,11 +369,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $internalId
-     *
-     * @return QrPayment
-     */
     public function setInternalId(string $internalId): self
     {
         $this->internalId = $internalId;
@@ -375,11 +376,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param DateTimeInterface $dueDate
-     *
-     * @return QrPayment
-     */
     public function setDueDate(?DateTimeInterface $dueDate): self
     {
         $this->dueDate = $dueDate;
@@ -387,11 +383,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param float $amount
-     *
-     * @return QrPayment
-     */
     public function setAmount(float $amount): self
     {
         $this->amount = $amount;
@@ -399,11 +390,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $country
-     *
-     * @return QrPayment
-     */
     public function setCountry(string $country): self
     {
         $this->country = $country;
@@ -411,11 +397,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $payeeName
-     *
-     * @return QrPayment
-     */
     public function setPayeeName(string $payeeName): QrPayment
     {
         $this->payeeName = $payeeName;
@@ -423,11 +404,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $addressLine
-     *
-     * @return QrPayment
-     */
     public function setPayeeAddressLine1(string $addressLine): QrPayment
     {
         $this->payeeAddressLine1 = $addressLine;
@@ -435,11 +411,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $addressLine
-     *
-     * @return QrPayment
-     */
     public function setPayeeAddressLine2(string $addressLine): QrPayment
     {
         $this->payeeAddressLine2 = $addressLine;
@@ -447,19 +418,11 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @return XzBinaryLocatorInterface
-     */
     public function getXzBinaryLocator(): XzBinaryLocatorInterface
     {
         return $this->xzBinaryLocator;
     }
 
-    /**
-     * @param XzBinaryLocatorInterface $xzBinaryLocator
-     *
-     * @return QrPayment
-     */
     public function setXzBinaryLocator(XzBinaryLocatorInterface $xzBinaryLocator): QrPayment
     {
         $this->xzBinaryLocator = $xzBinaryLocator;
@@ -467,11 +430,6 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @param string $binaryPath
-     *
-     * @return $this
-     */
     public function setXzBinary(?string $binaryPath): self
     {
         $this->xzBinaryLocator = new XzBinaryLocator($binaryPath);
@@ -479,83 +437,60 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
-    /**
-     * @throws QrPaymentException
-     *
-     * @return string
-     */
     public function getXzBinary(): string
     {
         return $this->xzBinaryLocator->getXzBinary();
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
-    public function getVariableSymbol(): ?int
+    public function getVariableSymbol()
     {
         return $this->variableSymbol;
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
-    public function getSpecificSymbol(): ?int
+    public function getSpecificSymbol()
     {
         return $this->specificSymbol;
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
-    public function getConstantSymbol(): ?int
+    public function getConstantSymbol()
     {
         return $this->constantSymbol;
     }
 
-    /**
-     * @return string
-     */
     public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @return string
-     */
     public function getComment(): string
     {
         return $this->comment;
     }
 
-    /**
-     * @return string
-     */
     public function getInternalId(): string
     {
         return $this->internalId;
     }
 
-    /**
-     * @return float
-     */
     public function getAmount(): float
     {
         return $this->amount;
     }
 
-    /**
-     * @return string
-     */
     public function getCountry(): string
     {
         return $this->country;
     }
 
-    /**
-     * @return string
-     */
     public function getPayeeName(): string
     {
         return $this->payeeName;
@@ -564,8 +499,6 @@ final class QrPayment implements QrPaymentInterface
     /**
      * Checks whether the due date is set.
      * Throws exception if the date format cannot be parsed by strtotime() func
-     *
-     * @return DateTimeInterface
      */
     public function getDueDate(): DateTimeInterface
     {
