@@ -142,14 +142,14 @@ $payment = new QrPayment();
 $payment
     ->setAmount(100)
     ->setComment('payment')
-    ->setConstantSymbol(123)
+    ->setConstantSymbol('123')
     ->setCountry('SK')
     ->setCurrency('EUR')
     ->setDueDate(new DateTime('+1 week'))
     ->setInternalId('456')
     ->setPayeeName('John Doe')
-    ->setSpecificSymbol(789)
-    ->setVariableSymbol(012)
+    ->setSpecificSymbol('789')
+    ->setVariableSymbol('012')
     ->setXzBinary('/path/to/xz')
     ->setIbans([
         new IBAN('SK01234567890123456')
@@ -199,7 +199,7 @@ $payment = new QrPayment(new IBAN('SK6807200002891987426353'));
 
 $payment
     ->setAmount(500)
-    ->setVariableSymbol(123456)
+    ->setVariableSymbol('123456')
     ->setDueDate(new DateTime('+1 week'))
 ;
 
