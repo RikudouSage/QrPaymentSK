@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/RikudouSage/QrPaymentSK/actions/workflows/test.yaml/badge.svg)](https://github.com/RikudouSage/QrPaymentSK/actions/workflows/test.yaml)
 [![Code Quality](https://app.codacy.com/project/badge/Grade/f1ce4eb8a2fa4c5a947dbebfc367355d)](https://www.codacy.com/gh/RikudouSage/QrPaymentSK/dashboard)
-[![Coverage Status](https://app.codacy.com/project/badge/Coverage/f1ce4eb8a2fa4c5a947dbebfc367355d)](https://www.codacy.com/gh/RikudouSage/QrPaymentSK/dashboard)
+[![Coverage Status](https://img.shields.io/codecov/c/github/RikudouSage/QrPaymentSK?token=W6GXFQ88X3)](https://codecov.io/gh/RikudouSage/QrPaymentSK)
 [![Download](https://img.shields.io/packagist/dt/rikudou/skqrpayment.svg)](https://packagist.org/packages/rikudou/skqrpayment)
 
 This library generates a string that can be embedded into QR code and is recognized by all Slovak banks.
