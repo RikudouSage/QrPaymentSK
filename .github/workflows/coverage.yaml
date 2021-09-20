@@ -22,3 +22,5 @@ jobs:
         run: composer phpunit -- --coverage-clover ./build/logs/clover.xml
       - name: Publish Coverage
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./build/logs/clover.xml
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
