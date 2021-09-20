@@ -57,26 +57,6 @@ jobs:
         run: composer install
       - name: Run tests
         run: composer phpunit
-  coverage:
-    name: Report Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: composer install
-      - name: Generate Coverage
-        run: composer phpunit -- --coverage-clover ./build/logs/clover.xml
-      - name: Download Coverage Client
-        run: wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.4.3/php-coveralls.phar
-      - name: Publish Coverage (Coveralls)
-        run: php php-coveralls.phar -v
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   tests-32bit:
     name: Test 32 bit php
     runs-on: ubuntu-latest
