@@ -23,6 +23,8 @@ jobs:
         run: composer install
       - name: Test code style
         run: composer fixer -- --dry-run
+        env:
+          PHP_CS_FIXER_IGNORE_ENV: 1
   static_analysis:
     name: Static analysis
     runs-on: ubuntu-latest
