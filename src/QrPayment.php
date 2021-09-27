@@ -435,6 +435,16 @@ final class QrPayment implements QrPaymentInterface
         return $this;
     }
 
+    public function getPayeeAddressLine1(): string
+    {
+        return $this->payeeAddressLine1;
+    }
+
+    public function getPayeeAddressLine2(): string
+    {
+        return $this->payeeAddressLine2;
+    }
+
     public function getXzBinaryLocator(): XzBinaryLocatorInterface
     {
         return $this->xzBinaryLocator;

@@ -6,6 +6,8 @@ use DateTime;
 use DateTimeInterface;
 use Endroid\QrCode\QrCode;
 use InvalidArgumentException;
+use Rikudou\BySquare\Decoder\PayBySquareDecoder;
+use Rikudou\BySquare\VO\DecodedBySquareData;
 use Rikudou\Iban\Iban\IBAN;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
@@ -13,6 +15,7 @@ use rikudou\SkQrPayment\Payment\QrPaymentOptions;
 use rikudou\SkQrPayment\QrPayment;
 use PHPUnit\Framework\TestCase;
 use rikudou\SkQrPayment\Xz\XzBinaryLocator;
+use stdClass;
 use TypeError;
 
 class QrPaymentTest extends TestCase
@@ -92,7 +95,7 @@ class QrPaymentTest extends TestCase
         // test that values from array are type checked
         $this->expectException(TypeError::class);
         $this->instance->setOptions([
-            QrPaymentOptions::VARIABLE_SYMBOL => new \stdClass(),
+            QrPaymentOptions::VARIABLE_SYMBOL => new stdClass(),
         ]);
     }
 
@@ -226,7 +229,7 @@ class QrPaymentTest extends TestCase
         self::assertSame('123', $this->instance->getVariableSymbol());
 
         $this->expectException(TypeError::class);
-        $this->instance->setVariableSymbol(new \stdClass());
+        $this->instance->setVariableSymbol(new stdClass());
     }
 
     public function testSetSpecificSymbol()
@@ -247,7 +250,7 @@ class QrPaymentTest extends TestCase
         self::assertSame('123', $this->instance->getSpecificSymbol());
 
         $this->expectException(TypeError::class);
-        $this->instance->setSpecificSymbol(new \stdClass());
+        $this->instance->setSpecificSymbol(new stdClass());
     }
 
     public function testSetConstantSymbol()
@@ -268,6 +271,15 @@ class QrPaymentTest extends TestCase
         self::assertSame('123', $this->instance->getConstantSymbol());
 
         $this->expectException(TypeError::class);
-        $this->instance->setConstantSymbol(new \stdClass());
+        $this->instance->setConstantSymbol(new stdClass());
+    }
+
+    public function testSetPayeeAddressLine()
+    {
+        $this->instance->setPayeeAddressLine1('123');
+        $this->instance->setPayeeAddressLine2('456');
+
+        self::assertEquals('123', $this->instance->getPayeeAddressLine1());
+        self::assertEquals('456', $this->instance->getPayeeAddressLine2());
     }
 }
