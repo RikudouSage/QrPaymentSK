@@ -6,8 +6,12 @@ use DateTime;
 use DateTimeInterface;
 use Endroid\QrCode\QrCode;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 use Rikudou\Iban\Iban\IbanInterface;
 use Rikudou\QrPayment\QrPaymentInterface;
+use Rikudou\QrPaymentQrCodeProvider\EndroidQrCode3;
+use Rikudou\QrPaymentQrCodeProvider\Exception\NoProviderFoundException;
+use Rikudou\QrPaymentQrCodeProvider\GetQrCodeTrait;
 use rikudou\SkQrPayment\Exception\InvalidTypeException;
 use rikudou\SkQrPayment\Exception\QrPaymentException;
 use rikudou\SkQrPayment\Iban\IbanBicPair;
@@ -18,6 +22,8 @@ use TypeError;
 
 final class QrPayment implements QrPaymentInterface
 {
+    use GetQrCodeTrait;
+
     /**
      * @var IbanInterface[]
      */
@@ -228,13 +234,24 @@ final class QrPayment implements QrPaymentInterface
      *
      * @throws QrPaymentException
      */
+    #[Deprecated('This method has been deprecated, please use getQrCode()', '%class%->getQrCode()->getRawObject()')]
     public function getQrImage(): QrCode
     {
-        if (!class_exists("Endroid\QrCode\QrCode")) {
+        try {
+            $code = $this->getQrCode();
+            if (!$code instanceof EndroidQrCode3) {
+                throw new QrPaymentException('Error: library endroid/qr-code is not loaded or is not a 3.x version. For newer versions please use method getQrCode()');
+            }
+            // @codeCoverageIgnoreStart
+        } catch (NoProviderFoundException $e) {
             throw new QrPaymentException('Error: library endroid/qr-code is not loaded.');
+            // @codeCoverageIgnoreEnd
         }
 
-        return new QrCode($this->getQrString());
+        $raw = $code->getRawObject();
+        assert($raw instanceof QrCode);
+
+        return $raw;
     }
 
     /**

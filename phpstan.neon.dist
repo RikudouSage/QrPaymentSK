@@ -1,4 +1,6 @@
 parameters:
+  reportUnmatchedIgnoredErrors: false
   treatPhpDocTypesAsCertain: false
   ignoreErrors:
     - '#Method rikudou\\SkQrPayment\\IbanToBic\\Dictionary\\.*?BicDictionary::getMap\(\) should return array<string, string> but returns array<int\|string, string>.#'
+    - '#Attribute class JetBrains.+? does not exist#'
