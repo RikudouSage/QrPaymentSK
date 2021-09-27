@@ -21,10 +21,14 @@ final class XzBinaryLocator implements XzBinaryLocatorInterface
         if ($this->path === null) {
             exec('which xz', $output, $return);
             if ($return !== 0) {
+                // @codeCoverageIgnoreStart
                 throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()");
+                // @codeCoverageIgnoreEnd
             }
             if (!isset($output[0])) {
+                // @codeCoverageIgnoreStart
                 throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()");
+                // @codeCoverageIgnoreEnd
             }
             $this->path = $output[0];
         }
