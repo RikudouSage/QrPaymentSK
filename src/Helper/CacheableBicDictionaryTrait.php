@@ -34,7 +34,9 @@ trait CacheableBicDictionaryTrait
     private function getCached(IbanInterface $iban): string
     {
         if (!$this->isCached($iban)) {
+            // @codeCoverageIgnoreStart
             throw new CacheException("There is no cache for IBAN {$iban}");
+            // @codeCoverageIgnoreEnd
         }
 
         return $this->cache[$iban->asString()];
