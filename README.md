@@ -184,7 +184,7 @@ QR code generating library is installed, the method `getQrCode()` will return an
 ```php
 <?php
 
-use Rikudou\CzQrPayment\QrPayment;
+use rikudou\SkQrPayment\QrPayment;
 use Endroid\QrCode\QrCode;
 
 $payment = new QrPayment(...);
