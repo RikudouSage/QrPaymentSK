@@ -174,6 +174,43 @@ Additionally, these properties are not required:
 - `internalId`
 - `payeeName`
 
+## QR Code image
+
+This library provides many implementations of QR code image using its sister library
+[rikudou/qr-payment-qr-code-provider](https://github.com/RikudouSage/QrPaymentQrCodeProvider). If any supported
+QR code generating library is installed, the method `getQrCode()` will return an instance of
+`\Rikudou\QrPaymentQrCodeProvider\QrCode` which can be used to get an image containing the generated QR payment data.
+
+```php
+<?php
+
+use rikudou\SkQrPayment\QrPayment;
+use Endroid\QrCode\QrCode;
+
+$payment = new QrPayment(...);
+
+$qrCode = $payment->getQrCode();
+
+// get the raw image data and display them in the browser
+header('Content-Type: image/png');
+echo $qrCode->getRawString();
+
+// use in an img html tag
+echo "<img src='{$qrCode->getDataUri()}'>";
+
+// write to a file
+$qrCode->writeToFile('/tmp/some-file.png');
+
+// get the raw object from the underlying system
+$raw = $qrCode->getRawObject();
+// let's assume we're using endroid/qr-code v4
+assert($raw instanceof QrCode);
+// do some custom transformations
+$raw->setLabelFontSize(15);
+// the object is still referenced by the adapter, meaning we can now render it the same way as before
+echo "<img src='{$qrCode->getDataUri()}'>";
+```
+
 ### The xz binary
 
 Since the Pay by Square standard uses lzma1 which has no php binding, the xz binary needs to be called.
