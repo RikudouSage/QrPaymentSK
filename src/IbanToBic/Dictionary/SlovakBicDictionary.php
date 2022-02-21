@@ -19,10 +19,11 @@ final class SlovakBicDictionary extends AbstractBicDictionary
     {
         return [
             '0200' => 'SUBASKBX',
-            '0900' => 'GIBASKBX',
             '0720' => 'NBSBSKBX',
+            '0900' => 'GIBASKBX',
             '1100' => 'TATRSKBX',
             '1111' => 'UNCRSKBX',
+            '2010' => 'FIOBCZPP',
             '3000' => 'SLZBSKBA',
             '3100' => 'LUBASKBX',
             '5200' => 'OTPVSKBX',
@@ -37,15 +38,23 @@ final class SlovakBicDictionary extends AbstractBicDictionary
             '8100' => 'KOMBSKBA',
             '8120' => 'BSLOSK22',
             '8130' => 'CITISKBA',
-            '8170' => 'KBSPSKBX',
             '8160' => 'EXSKSKBX',
+            '8170' => 'KBSPSKBX',
             '8180' => 'SPSRSKBA',
             '8300' => 'HSBCSKBA',
             '8320' => 'JTBPSKBA',
             '8330' => 'FIOZSKBA',
             '8350' => 'ABNASKBX',
             '8360' => 'BREXSKBX',
+            '8370' => 'OBKLSKBA',
+            '8390' => 'AKCTCZ21',
+            '8410' => 'RIDBSKBX',
+            '8420' => 'BFKKSKBB',
+            '8430' => 'KODBSKBX',
+            '8440' => 'BNPASA',
+            '9950' => 'FDXXSKBA',
             '9951' => 'XBRASKB1',
+            '9952' => 'TPAYSKBX',
         ];
     }
 }
