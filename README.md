@@ -8,7 +8,8 @@ This library generates a string that can be embedded into QR code and is recogni
 
 The library requires the `xz` binary to present on the underlying system.
 
-> See also QR code payment generator for [Czech](https://github.com/RikudouSage/QrPaymentCZ) or
+> See also QR code payment generator for [Czech](https://github.com/RikudouSage/QrPaymentCZ),
+> [Hungarian](https://github.com/hubipe/QrPaymentHU) or
 > [European](https://github.com/RikudouSage/QrPaymentEU) accounts.
 
 ## Installation
