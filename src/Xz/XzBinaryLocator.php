@@ -19,7 +19,13 @@ final class XzBinaryLocator implements XzBinaryLocatorInterface
     public function getXzBinary(): string
     {
         if ($this->path === null) {
-            exec('which xz', $output, $return);
+            if (stristr(PHP_OS, 'LINUX')) {
+                exec( 'which xz', $output, $return );
+            } elseif (stristr(PHP_OS, 'WIN')) {
+                exec( 'where xz', $output, $return );
+            } else {
+                throw new QrPaymentException("not supported OS");
+            }
             if ($return !== 0) {
                 // @codeCoverageIgnoreStart
                 throw new QrPaymentException("'xz' binary not found in PATH, specify it using setXzBinary()");
