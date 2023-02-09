@@ -176,7 +176,7 @@ final class QrPayment implements QrPaymentInterface
         $xzBinary = $this->getXzBinary();
 
         // we need to get raw lzma1 compressed data with parameters LC=3, LP=0, PB=2, DICT_SIZE=128KiB
-        $xzProcess = proc_open("${xzBinary} --format=raw --lzma1=lc=3,lp=0,pb=2,dict=128KiB -c -", [
+        $xzProcess = proc_open("{$xzBinary} --format=raw --lzma1=lc=3,lp=0,pb=2,dict=128KiB -c -", [
             0 => [
                 'pipe',
                 'r',
