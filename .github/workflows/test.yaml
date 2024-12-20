@@ -66,6 +66,8 @@ jobs:
     steps:
       - name: Whitelist GIT dir
         run: git config --global --add safe.directory $(pwd)
+      - name: Install xz
+        run: apt-get update && apt-get -y install xz-utils
       - name: Install PHP
         run: |
           spc -U
