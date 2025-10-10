@@ -11,7 +11,7 @@ final class InvalidTypeException extends QrPaymentException
      * @param mixed                $actual
      * @param int                  $code
      */
-    public function __construct($expected, $actual, $code = 0, Throwable $previous = null)
+    public function __construct($expected, $actual, $code = 0, ?Throwable $previous = null)
     {
         if (is_array($expected)) {
             $expected = implode("' or '", $expected);
